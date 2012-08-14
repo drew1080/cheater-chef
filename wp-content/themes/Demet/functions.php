@@ -105,7 +105,7 @@ http://newwpthemes.com/hosting/hg125.gif, http://newwpthemes.com/hosting/hostgat
 		"desc" => "Sidebar 1 Bottom Banner code.",
         "id" => $shortname."_ad_sidebar1_bottom",
         "type" => "textarea",
-		"std" => '<a href="http://graphicriver.net/?ref=pluswebdev"><img src="http://themeforest.net/new/images/ms_referral_banners/GR_160x600.jpg" /></a>'
+		"std" => ''
 		),	array(	"name" => "Sidebar 2 Bottom Banner",
 		"desc" => "Sidebar 2 Bottom Banner code.",
         "id" => $shortname."_ad_sidebar2_bottom",

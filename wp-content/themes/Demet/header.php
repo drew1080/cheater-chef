@@ -91,9 +91,6 @@
 						
 					</div>
 					
-					<div class="span-12 last" style="padding-top: 20px; text-align:right;">
-						<?php echo get_theme_option('ad_header'); ?>
-					</div>
 				</div>
 			
 			<div class="span-24">
