@@ -1,7 +1,7 @@
 *.DS_Store
 wp-content/uploads/*
 *.tmproj
-database backups/localhost*
+db-backups/*
 wp-content/debug.log
 docs/*
 wp-config.php
