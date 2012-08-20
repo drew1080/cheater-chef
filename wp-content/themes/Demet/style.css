@@ -11,7 +11,7 @@
 /* LAYOUT */
 
 body {
-/*  background: #e3e1e1 url(images/background.png) top left repeat-x;*/
+	background: #e3e1e1 url(images/background.png) top left repeat-x;
 	}
 
 #wrapper {
@@ -34,26 +34,22 @@ a:hover {
 	}
 /* HEADER */
 
-.span-4.last {
-  width: 100%;
-}
-
 #header {
-/*  height: 115px;*/
+	height: 135px;
 	}
 
 #header h1 {
 	margin-bottom: 0px !important;
-	padding: 10px 0 0 0;
+	padding: 20px 0 0 0;
 	font-weight: normal;
 	font-family: Arial, Helvetica, Sans-serif;
 	font-weight: bold;
-	font-size: 30px;
-  text-transform: uppercase;
+	font-size: 50px;
+    text-transform: uppercase;
 	}
 
 #header h1 a, #header h1 a:visited {
-	color: black;
+	color: #fff;
 	text-decoration: none;
 	}
 
@@ -61,22 +57,11 @@ a:hover {
 #header h2 {
 	color: #6e6e6e;
 	font-size: 14px;
-  font-family: Arial, Helvetica, Sans-serif;
-  margin-bottom: 0px;
+    font-family: Arial, Helvetica, Sans-serif;
 	}
 
 .logoimg {
-    margin: 5px 0 0 0px;
-}
-
-#header .span-12 img {
-  width: 730px;
-  height: 90px;
-}
-
-#header .span-12 {
-  text-align: center;
-  width: 100%;
+    margin: 20px 0 0 0px;
 }
 
 /* NAVIGATION MENUS */
@@ -380,8 +365,6 @@ div.aligncenter {
 .sidebaradbox {
 	margin-top: 5px; 
 	text-align:center;
-  /* TODO hiding due to broken image*/
-/*  display: none;*/
 	}
 	
 .ad125 {

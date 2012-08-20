@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><?php function wp_initialize_the_theme() { if (!function_exists("wp_initialize_the_theme_load") || !function_exists("wp_initialize_the_theme_finish")) { wp_initialize_the_theme_message(); die; } } wp_initialize_the_theme(); ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" <?php language_attributes(); ?>>
 
 <head profile="http://gmpg.org/xfn/11">
@@ -42,28 +42,28 @@
 	<div id="wrapper">
 		<div id="container" class="container">  
 			<div class="span-24">
-                <!-- <div class="span-20">
-                            <div id="pagemenucontainer">
-                              <?php
-                                    if(function_exists('wp_nav_menu')) {
-                                        wp_nav_menu( 'depth=1&theme_location=menu_1&menu_id=pagemenu&container=&fallback_cb=menu_1_default');
-                                    } else {
-                                        menu_1_default();
-                                    }
-                                    
-                                    function menu_1_default()
-                                    {
-                                        ?>
-                                        <ul id="pagemenu">
-                                <li <?php if(is_home()) { ?> class="current_page_item" <?php } ?>><a href="<?php echo get_option('home'); ?>/">Home</a></li>
-                                <?php wp_list_pages('depth=1&sort_column=menu_order&title_li=' ); ?>
-                              </ul>
-                                        <?php
-                                    }
-                                    
-                                ?>
-                            </div>
-                        </div> -->
+                <div class="span-20">
+    				<div id="pagemenucontainer">
+    					<?php
+                    if(function_exists('wp_nav_menu')) {
+                        wp_nav_menu( 'depth=1&theme_location=menu_1&menu_id=pagemenu&container=&fallback_cb=menu_1_default');
+                    } else {
+                        menu_1_default();
+                    }
+                    
+                    function menu_1_default()
+                    {
+                        ?>
+                        <ul id="pagemenu">
+    						<li <?php if(is_home()) { ?> class="current_page_item" <?php } ?>><a href="<?php echo get_option('home'); ?>/">Home</a></li>
+    						<?php wp_list_pages('depth=1&sort_column=menu_order&title_li=' ); ?>
+    					</ul>
+                        <?php
+                    }
+                    
+                ?>
+    				</div>
+				</div>
 			
                 <div class="span-4 last">
                     <div class="topright">
@@ -80,8 +80,6 @@
 						if($get_logo_image != '') {
 							?>
 							<a href="<?php bloginfo('url'); ?>"><img src="<?php echo $get_logo_image; ?>" alt="<?php bloginfo('name'); ?>" title="<?php bloginfo('name'); ?>" class="logoimg" /></a>
-							<h1><a href="<?php bloginfo('url'); ?>"><?php bloginfo('name'); ?></a></h1>
-							<h2><?php bloginfo('description'); ?></h2>
 							<?php
 						} else {
 							?>
@@ -93,6 +91,9 @@
 						
 					</div>
 					
+					<div class="span-12 last" style="padding-top: 20px; text-align:right;">
+						<?php echo get_theme_option('ad_header'); ?>
+					</div>
 				</div>
 			
 			<div class="span-24">

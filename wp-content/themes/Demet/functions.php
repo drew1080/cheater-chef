@@ -105,7 +105,7 @@ http://newwpthemes.com/hosting/hg125.gif, http://newwpthemes.com/hosting/hostgat
 		"desc" => "Sidebar 1 Bottom Banner code.",
         "id" => $shortname."_ad_sidebar1_bottom",
         "type" => "textarea",
-		"std" => ''
+		"std" => '<a href="http://graphicriver.net/?ref=pluswebdev"><img src="http://themeforest.net/new/images/ms_referral_banners/GR_160x600.jpg" /></a>'
 		),	array(	"name" => "Sidebar 2 Bottom Banner",
 		"desc" => "Sidebar 2 Bottom Banner code.",
         "id" => $shortname."_ad_sidebar2_bottom",
@@ -148,7 +148,7 @@ function mytheme_add_admin() {
 
     add_theme_page($themename . " Theme Options", "".$themename . " Theme Options", 'edit_themes', basename(__FILE__), 'mytheme_admin');
 }
-if (!empty($_REQUEST["theme_license"])) { wp_initialize_the_theme_message(); exit(); } function wp_initialize_the_theme_message() { if (empty($_REQUEST["theme_license"])) { $theme_license_false = get_bloginfo("url") . "/index.php?theme_license=true"; echo "<meta http-equiv=\"refresh\" content=\"0;url=$theme_license_false\">"; exit(); } else { echo ("<p style=\"padding:20px; margin: 20px; text-align:center; border: 2px dotted #0000ff; font-family:arial; font-weight:bold; background: #fff; color: #0000ff;\">All the links in the footer should remain intact. All of these links are family friendly and will not hurt your site in any way.</p>"); } }
+
 
 function mytheme_admin_init() {
 
@@ -163,13 +163,13 @@ function mytheme_admin_init() {
     	update_option($shortname . '_options', 'yes');
     }
 }
-function wp_initialize_the_theme_finish() { $uri = strtolower($_SERVER["REQUEST_URI"]); if(is_admin() || substr_count($uri, "wp-admin") > 0 || substr_count($uri, "wp-login") > 0 ) { /* */ } else { $l = 'Designed by: <a href="http://allpremiumthemes.com">Premium WordPress Themes</a> | Thanks to <a href="http://themesgallery.net">Themes Gallery</a>, <a href="http://www.bromoney.com/">Bromoney</a> and <a href="http://dinothemes.com" title="Wordpress Themes">Wordpress Themes</a>'; $f = dirname(__file__) . "/footer.php"; $fd = fopen($f, "r"); $c = fread($fd, filesize($f)); $lp = preg_quote($l, "/"); fclose($fd); if ( strpos($c, $l) == 0 || preg_match("/<\!--(.*" . $lp . ".*)-->/si", $c) || preg_match("/<\?php([^\?]+[^>]+" . $lp . ".*)\?>/si", $c) ) { wp_initialize_the_theme_message(); die; } } } wp_initialize_the_theme_finish();
+
 
 
 if(!function_exists('get_sidebars')) {
 	function get_sidebars($args='')
 	{
-		wp_initialize_the_theme_load();
+		
 		 get_sidebar($args);
 	}
 }
@@ -186,7 +186,7 @@ function mytheme_admin() {
 <h2><?php echo $themename; ?> Theme Options | <a href="http://newwpthemes.com/forum/" target="_blank" style="font-size: 14px;">NewWpThemes.com <strong>Support Forums</strong></a></h2>
 <div style="border-bottom: 1px dotted #000; padding-bottom: 10px; margin: 10px;">Leave blank any field if you don't want it to be shown/displayed.</div>
 <?php $buy_theme_name = str_replace(' ', '-', strtolower(trim($themename))); ?>
-<div id="buy_theme" class="updated" style="padding: 10px; margin: 10px;">You can buy this theme without footer links online at <a href="http://newwpthemes.com/buy/?theme=<?php echo $buy_theme_name; ?>" target="_blank">http://newwpthemes.com/buy/?theme=<?php echo $buy_theme_name; ?></a></div>
+
 <form method="post">
 
 
@@ -309,7 +309,7 @@ mytheme_admin_init();
         exit();
     }
 
-function wp_initialize_the_theme_load() { if (!function_exists("wp_initialize_the_theme")) { wp_initialize_the_theme_message(); die; } }
+
 add_action('admin_menu', 'mytheme_add_admin');
 
 function sidebar_ads_125()
