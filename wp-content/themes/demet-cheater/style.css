@@ -278,6 +278,10 @@ pre { overflow: auto;
 	font-family: Arial, Verdana;
 	font-size: 14px;
 	}
+	
+.center-image {
+  text-align: center;
+}
 
 /* TODO remove */
 .single .entry .post_thumbnail {
@@ -307,7 +311,7 @@ blockquote {
 	}
 	
 .post img {
-	max-width: 680px;
+	max-width: 540px;
 	}
 
 img.wp-smiley {
