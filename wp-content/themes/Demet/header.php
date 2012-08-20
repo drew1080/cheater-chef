@@ -80,6 +80,8 @@
 						if($get_logo_image != '') {
 							?>
 							<a href="<?php bloginfo('url'); ?>"><img src="<?php echo $get_logo_image; ?>" alt="<?php bloginfo('name'); ?>" title="<?php bloginfo('name'); ?>" class="logoimg" /></a>
+							<h1><a href="<?php bloginfo('url'); ?>"><?php bloginfo('name'); ?></a></h1>
+							<h2><?php bloginfo('description'); ?></h2>
 							<?php
 						} else {
 							?>
