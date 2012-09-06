@@ -13,7 +13,7 @@
             </h2>
             <div class="postdate">
               <img src="<?php bloginfo('template_url'); ?>/images/date.png" /> <?php the_time('F jS, Y') ?> 
-              <img src="<?php bloginfo('template_url'); ?>/images/user.png" /> <?php the_author() ?> 
+              <?php the_author() ?> 
               <?php if (current_user_can('edit_post', $post->ID)) { ?> 
                 <img src="<?php bloginfo('template_url'); ?>/images/edit.png" /> 
                 <?php edit_post_link('Edit', '', ''); } ?></div>
