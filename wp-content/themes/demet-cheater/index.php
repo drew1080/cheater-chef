@@ -12,8 +12,7 @@
               <a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a>
             </h2>
             <div class="postdate">
-              <img src="<?php bloginfo('template_url'); ?>/images/date.png" /> <?php the_time('F jS, Y') ?> 
-              <?php the_author() ?> 
+              <?php the_author_posts_link(); ?> on <?php the_time('F jS, Y') ?> 
               <?php if (current_user_can('edit_post', $post->ID)) { ?> 
                 <img src="<?php bloginfo('template_url'); ?>/images/edit.png" /> 
                 <?php edit_post_link('Edit', '', ''); } ?></div>
