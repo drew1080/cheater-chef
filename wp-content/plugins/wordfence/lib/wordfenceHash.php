@@ -42,7 +42,7 @@ class wordfenceHash {
 		$this->api = new wfAPI($this->apiKey, $this->wp_version);
 	}
 	public function buildFileQueue($path, $only = array()){ //base path and 'only' is a list of files and dirs in the bast that are the only ones that should be processed. Everything else in base is ignored. If only is empty then everything is processed.
-		$this->db->query("truncate table " . $this->table);
+		$this->db->truncate($this->table);
 		if($path[strlen($path) - 1] != '/'){
 			$path .= '/';
 		}
@@ -72,7 +72,11 @@ class wordfenceHash {
 		$haveMoreInDB = true;
 		while($haveMoreInDB){
 			$haveMoreInDB = false;
-			$res = $this->db->query("select id, filename from " . $this->table . " limit 1000");
+			//This limit used to be 1000, but we changed it to 5 because forkIfNeeded needs to run frequently, but
+			// we still want to minimize the number of queries we do.
+			// So now we select, process and delete 5 from teh queue and then check forkIfNeeded()
+			// So this assumes that processing 5 files won't take longer than wfScanEngine::$maxExecTime (which was 10 at the time of writing, which is 2 secs per file)
+			$res = $this->db->query("select id, filename from " . $this->table . " limit 5");
 			$ids = array();
 			while($rec = mysql_fetch_row($res)){
 				$this->processFile($rec[1]);
@@ -86,7 +90,7 @@ class wordfenceHash {
 		}
 		//Will only reach here if we empty file queue. fork may cause exit
 		$this->sendHashPacket();
-		$this->db->query("truncate table " . $this->table); //Also resets id autoincrement to 1
+		$this->db->truncate($this->table); //Also resets id autoincrement to 1
 		$this->writeHashingStatus();
 	}
 	private function writeHashingStatus(){

@@ -39,7 +39,6 @@
               <?php endif; ?>
             </div>
           </div>
-          <?php# wp_get_links(); ?>
           <?php get_sidebars('right'); ?>
         </div>
         <?php get_footer(); ?>

@@ -20,13 +20,18 @@ body {
 
 #container {
 	}
+	
+#container .span-4 {
+  background: white;
+  padding-bottom: 5px;
+  }
 
 #contentwrap {
 	background:  url(images/content-background.png) top left repeat-y;
 	}
 
 a {
-	color: #0a90b7;
+	color: #F60;
 	}
 
 a:hover {
@@ -40,6 +45,8 @@ a:hover {
 
 #header {
 /*  height: 115px;*/
+    background: white;
+    padding-bottom: 10px;
 	}
 
 #header h1 {
@@ -170,7 +177,7 @@ a:hover {
     text-transform: uppercase;
 	}
 .topright a:hover {
-    color: #fff
+    color: #f60
 }
 
 
@@ -241,7 +248,7 @@ pre { overflow: auto;
 
 .title a:hover {
 	text-decoration: none;
-	color: #0a90b7;
+	color: #F60;
 	}
 
 .pagetitle {
@@ -437,7 +444,7 @@ div.aligncenter {
 
 .sidebar a:hover {
 	text-decoration: underline;
-	color:#0099c5;
+	color:#F60;
 	}
 
 	
@@ -552,16 +559,15 @@ div.aligncenter {
 /* FOOTER */
 
 #footer {
-	background: url(images/footer-background.png) top left repeat-x;
 	padding: 22px;
 	text-align: center;
-	color: #fff;
+	color: #6E6E6E;
 	font-size: 13px;
     border-top: 1px solid #fff;
 	}
 
 #footer a {
-	color: #fff;
+	color: #6E6E6E;
 	} 
 
 #footer a:hover {
@@ -662,3 +668,40 @@ div.aligncenter {
     border: 1px solid #ddd;
     margin: 0 10px 10px 0;
 }
+
+/* Social media buttons */
+.twitter-follow-button {
+  margin-right: 5px;
+}
+
+.fb-like {
+  margin-right: 5px;
+  vertical-align:top;
+}
+
+.pintrest-follow {
+  margin-right: 5px;
+}
+
+.rss-feed {
+  margin:0 0 0 0; 
+  vertical-align:top;
+}
+
+/* Footer menu */
+#menu-master {
+  list-style: none;
+}
+
+#menu-master li{
+  display: inline;
+  padding: 0px 4px;
+}
+
+#menu-master li a {
+	color: #F60;
+	}
+
+#menu-master li a:hover {
+	color: #c34f02;
+	}

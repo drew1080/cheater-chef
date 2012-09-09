@@ -37,11 +37,14 @@
   <?php echo get_theme_option("head") . "\n";  wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
-<script type="text/javascript">
-window.addEvent('domready', function() {			
-  var myMenu = new MenuMatic();
-});	
-</script>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=270906249694642";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
 <div id="wrapper">
   <div id="container" class="container">  
     <div class="span-24">
@@ -70,9 +73,11 @@ window.addEvent('domready', function() {
 
     <div class="span-4 last">
       <div class="topright">
-        <a href="<?php bloginfo('rss2_url'); ?>"><img src="<?php bloginfo('template_url'); ?>/images/rss.png"  style="margin:0 2px 0 0; vertical-align:top;"  /> RSS Feed</a>		
-        <?php if(get_theme_option('twitter') != '') { ?>&nbsp; <a href="<?php echo get_theme_option('twitter'); ?>" title="<?php echo get_theme_option('twittertext'); ?>"><img src="<?php bloginfo('template_url'); ?>/images/twitter.png"  style="margin:0 2px 0 0; vertical-align:top;"  title="<?php echo get_theme_option('twittertext'); ?>" /> Twitter</a><?php } ?>
-        </div>
+        <a href="https://twitter.com/cheaterchef" class="twitter-follow-button" data-show-count="false">Follow @cheaterchef</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        <a href="http://pinterest.com/cheaterchef/"><img src="http://passets-lt.pinterest.com/images/about/buttons/pinterest-button.png" width="60" height="20" alt="Follow Me on Pinterest" class="pintrest-follow"/></a>
+        <div class="fb-like" data-href="https://www.facebook.com/pages/Cheater-Chef/170386289680528" data-send="false" data-layout="button_count" data-width="50" data-show-faces="false"></div>
+        <a href="<?php bloginfo('rss2_url'); ?>"><img width="20" height="20" src="<?php bloginfo('template_url'); ?>/images/rss.png" class="rss-feed"/></a>		
       </div>
 
     </div>

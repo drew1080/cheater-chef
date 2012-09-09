@@ -13,23 +13,36 @@ class wordfenceScanner {
 	private $totalFilesScanned = 0;
 	private $startTime = false;
 	private $lastStatusTime = false;
+	private $patterns = "";
 	public function __sleep(){
-		return array('path', 'fileList', 'results', 'errorMsg', 'apiKey', 'wordpressVersion', 'urlHoover', 'totalFilesScanned', 'startTime', 'lastStatusTime');
+		return array('path', 'fileList', 'results', 'errorMsg', 'apiKey', 'wordpressVersion', 'urlHoover', 'totalFilesScanned', 'startTime', 'lastStatusTime', 'patterns');
 	}
 	public function __wakeup(){
 	}
 	public function __construct($apiKey, $wordpressVersion, $fileList, $path){
 		$this->apiKey = $apiKey;
 		$this->wordpressVersion = $wordpressVersion;
+		$this->api = new wfAPI($this->apiKey, $this->wordpressVersion);
 		$this->fileList = $fileList; //A long string of <2 byte network order short showing filename length><filename>
 		if($path[strlen($path) - 1] != '/'){
 			$path .= '/';
 		}
 		$this->path = $path;
+		
+		
 		$this->results = array();
 		$this->errorMsg = false;
 		//First extract hosts or IP's and their URL's into $this->hostsFound and URL's into $this->urlsFound
 		$this->urlHoover = new wordfenceURLHoover($this->apiKey, $this->wordpressVersion);
+		$this->setupSigs();
+	}
+	private function setupSigs(){
+		$this->api = new wfAPI($this->apiKey, $this->wordpressVersion);
+		$sigData = $this->api->call('get_patterns', array(), array());	
+		if(! (is_array($sigData) && isset($sigData['sigPattern'])) ){
+			throw new Exception("Wordfence could not get the attack signature patterns from the scanning server.");
+		}
+		$this->patterns = $sigData;
 	}
 	public function scan($forkObj){
 		if(! $this->startTime){
@@ -116,9 +129,26 @@ class wordfenceScanner {
 							)
 							));
 						break;
+					} else if(strpos($file, 'lib/wordfenceScanner.php') === false && preg_match($this->patterns['sigPattern'], $data, $matches)){
+						$this->addResult(array(
+							'type' => 'file',
+							'severity' => 1,
+							'ignoreP' => $this->path . $file,
+							'ignoreC' => $fileSum,
+							'shortMsg' => "This file appears to be an attack shell",
+							'longMsg' => "This file appears to be an executable shell that allows hackers entry to your site via a backdoor. If you know about this file you can choose to ignore it to exclude it from future scans. The text we found in this file that matches a known malicious file is: <strong style=\"color: #F00;\">\"" . $matches[1] . "\"</strong>.",
+							'data' => array(
+								'file' => $file,
+								'canDiff' => false,
+								'canFix' => false,
+								'canDelete' => true
+							)
+							));
+						break;
+
 					}
 					$longestNospace = wfUtils::longestNospace($data);
-					if($longestNospace > 1000 && (strpos($data, 'eval') !== false || preg_match('/preg_replace\([^\(]+\/[a-z]*e/', $data)) ){
+					if($longestNospace > 1000 && (strpos($data, $this->patterns['pat1']) !== false || preg_match('/preg_replace\([^\(]+\/[a-z]*e/', $data)) ){
 						$this->addResult(array(
 							'type' => 'file',
 							'severity' => 1,
@@ -135,14 +165,14 @@ class wordfenceScanner {
 							));
 						break;
 					}
-					if(preg_match('/eval.*base'.'64_decode/i', $data)){
+					if(preg_match($this->patterns['pat2'], $data)){
 						$this->addResult(array(
 							'type' => 'file',
 							'severity' => 1,
 							'ignoreP' => $this->path . $file,
 							'ignoreC' => $fileSum,
 							'shortMsg' => "This file may contain malicious executable code",
-							'longMsg' => "This file is a PHP executable file and contains an evaluation function and base"."64 decoding function on the same line. This is a common technique used by hackers to hide and execute code. If you know about this file you can choose to ignore it to exclude it from future scans.",
+							'longMsg' => "This file is a PHP executable file and contains an " . $this->patterns['word1'] . " function and " . $this->patterns['word2'] . " decoding function on the same line. This is a common technique used by hackers to hide and execute code. If you know about this file you can choose to ignore it to exclude it from future scans.",
 							'data' => array(
 								'file' => $file,
 								'canDiff' => false,
@@ -186,7 +216,7 @@ class wordfenceScanner {
 						'ignoreP' => $this->path . $file,
 						'ignoreC' => md5_file($this->path . $file),
 						'shortMsg' => "File contains suspected malware URL: " . $this->path . $file,
-						'longMsg' => "This file contains a suspected malware URL listed on Google's list of malware sites. Wordfence decodes base"."64 when scanning files so the URL may not be visible if you view this file. The URL is: " . $result['URL'] . " - More info available at <a href=\"http://safebrowsing.clients.google.com/safebrowsing/diagnostic?site=" . urlencode($result['URL']) . "&client=googlechrome&hl=en-US\" target=\"_blank\">Google Safe Browsing diagnostic page</a>.",
+						'longMsg' => "This file contains a suspected malware URL listed on Google's list of malware sites. Wordfence decodes " . $this->patterns['word3'] . " when scanning files so the URL may not be visible if you view this file. The URL is: " . $result['URL'] . " - More info available at <a href=\"http://safebrowsing.clients.google.com/safebrowsing/diagnostic?site=" . urlencode($result['URL']) . "&client=googlechrome&hl=en-US\" target=\"_blank\">Google Safe Browsing diagnostic page</a>.",
 						'data' => array(
 							'file' => $file,
 							'badURL' => $result['URL'],
@@ -241,7 +271,7 @@ class wordfenceScanner {
 	}
 	public static function containsCode($arr){
 		foreach($arr as $elem){
-			if(preg_match('/(?:base'.'64_decode|base'.'64_encode|eval|if|exists|isset|close|file|implode|fopen|while|feof|fread|fclose|fsockopen|fwrite|explode|chr|gethostbyname|strstr|filemtime|time|count|trim|rand|stristr|dir|mkdir|urlencode|ord|substr|unpack|strpos|sprintf)[\r\n\s\t]*\(/i', $elem)){
+			if(preg_match($this->patterns['pat3'], $elem)){
 				return true;
 			}
 		}

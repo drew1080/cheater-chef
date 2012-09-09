@@ -50,6 +50,10 @@ class wfLog {
 		return $pagename;
 	}
 	public function logLeechAndBlock($type){ //404 or hit
+		$IP = wfUtils::getIP();
+		if($this->isWhitelisted($IP)){
+			return;
+		}
 		if($type == '404'){
 			$table = $this->scanTable;
 		} else if($type == 'hit'){
@@ -58,12 +62,11 @@ class wfLog {
 			wordfence::status(1, 'error', "Invalid type to logLeechAndBlock(): $type");
 			return;
 		}
-		$IP = wfUtils::getIP();
 		$this->getDB()->query("insert into $table (eMin, IP, hits) values (floor(unix_timestamp() / 60), %s, 1) ON DUPLICATE KEY update hits = IF(@wfcurrenthits := hits + 1, hits + 1, hits + 1)", wfUtils::inet_aton($IP)); 
 		$hitsPerMinute = $this->getDB()->querySingle("select @wfcurrenthits");
 		if(wfConfig::get('firewallEnabled')){
 			if(wfConfig::get('blockFakeBots')){
-				if(wfCrawl::isGoogleCrawler() && (! wfCrawl::verifyCrawlerPTR($this->googlePattern, $IP) )){
+				if(wfCrawl::isGooglebot() && (! wfCrawl::verifyCrawlerPTR($this->googlePattern, $IP) )){
 					wordfence::status(2, 'info', "Blocking fake Googlebot at IP $IP");
 					$this->blockIP($IP, "Fake Google crawler automatically blocked");
 				}
@@ -219,7 +222,7 @@ class wfLog {
 		return $results;
 	}
 	public function getLockedOutIPs(){
-		$res = $this->getDB()->query("select IP, unix_timestamp() - blockedTime as createdAgo, reason, unix_timestamp() - lastAttempt as lastAttemptAgo, lastAttempt, blockedHits, (blockedTime + %s) - unix_timestamp() as blockedFor from " . $this->lockOutTable . " where blockedTime + %s > unix_timestamp() order by blockedTime desc", wfConfig::get('blockedTime'), wfConfig::get('blockedTime'));
+		$res = $this->getDB()->query("select IP, unix_timestamp() - blockedTime as createdAgo, reason, unix_timestamp() - lastAttempt as lastAttemptAgo, lastAttempt, blockedHits, (blockedTime + %s) - unix_timestamp() as blockedFor from " . $this->lockOutTable . " where blockedTime + %s > unix_timestamp() order by blockedTime desc", wfConfig::get('loginSec_lockoutMins'), wfConfig::get('loginSec_lockoutMins'));
 		$results = array();
 		while($elem = mysql_fetch_assoc($res)){			
 			$elem['lastAttemptAgo'] = $elem['lastAttempt'] ? wfUtils::makeTimeAgo($elem['lastAttemptAgo']) : '';
@@ -483,7 +486,25 @@ class wfLog {
 	}
 	public function firewallBadIPs(){
 		$blockedCountries = wfConfig::get('cbl_countries', false);
-		if($blockedCountries && wfConfig::get('isPaid')){
+		$bareRequestURI = wfUtils::extractBareURI($_SERVER['REQUEST_URI']);
+		$bareBypassRedirURI = wfUtils::extractBareURI(wfConfig::get('cbl_bypassRedirURL', ''));
+		$skipCountryBlocking = false;
+
+		if($bareBypassRedirURI && $bareRequestURI == $bareBypassRedirURI){ //Run this before country blocking because even if the user isn't blocked we need to set the bypass cookie so they can bypass future blocks.
+			$bypassRedirDest = wfConfig::get('cbl_bypassRedirDest', '');
+			if($bypassRedirDest){
+				self::setCBLCookieBypass();
+				$this->redirect($bypassRedirDest); //exits
+			}
+		}
+		$bareBypassViewURI = wfUtils::extractBareURI(wfConfig::get('cbl_bypassViewURL', ''));
+		if($bareBypassViewURI && $bareBypassViewURI == $bareRequestURI){
+			self::setCBLCookieBypass();
+			$skipCountryBlocking = true;
+		}
+			
+
+		if((! $skipCountryBlocking) && $blockedCountries && wfConfig::get('isPaid') && (! self::isCBLBypassCookieSet()) ){
 			if(is_user_logged_in() && (! wfConfig::get('cbl_loggedInBlocked', false)) ){ //User is logged in and we're allowing logins
 				//Do nothing
 			} else if(strpos($_SERVER['REQUEST_URI'], '/wp-login.php') !== false && (! wfConfig::get('cbl_loginFormBlocked', false))  ){ //It's the login form and we're allowing that
@@ -491,10 +512,10 @@ class wfLog {
 			} else {
 				if($country = wfUtils::IP2Country(wfUtils::getIP()) ){
 					foreach(explode(',', $blockedCountries) as $blocked){
-						if(strtoupper($blocked) == strtoupper($country)){
+						if(strtoupper($blocked) == strtoupper($country)){ //At this point we know the user has been blocked
 							if(wfConfig::get('cbl_action') == 'redir'){
 								$redirURL = wfConfig::get('cbl_redirURL');
-								if(wfUtils::extractBareURI($redirURL) == wfUtils::extractBareURI($_SERVER['REQUEST_URI'])){ //Is this the URI we want to redirect to, then don't block it
+								if(wfUtils::extractBareURI($redirURL) == $bareRequestURI){ //Is this the URI we want to redirect to, then don't block it
 									//Do nothing
 								/* Uncomment the following if page components aren't loading for the page we redirect to.
 								   Uncommenting is not recommended because it means that anyone from a blocked country
@@ -522,6 +543,23 @@ class wfLog {
 			$secsToGo = ($rec['blockedTime'] + wfConfig::get('blockedTime')) - $now;
 			$this->do503($secsToGo, $rec['reason']); 
 		}
+	}
+	public function getCBLCookieVal(){
+		$val = wfConfig::get('cbl_cookieVal', false);
+		if(! $val){
+			$val = uniqid();
+			wfConfig::set('cbl_cookieVal', $val);
+		}
+		return $val;
+	}
+	public function setCBLCookieBypass(){
+		@setcookie('wfCBLBypass', self::getCBLCookieVal(), time() + (86400 * 365), '/');
+	}
+	public function isCBLBypassCookieSet(){
+		if(isset($_COOKIE['wfCBLBypass']) && $_COOKIE['wfCBLBypass'] == wfConfig::get('cbl_cookieVal')){
+			return true;
+		}
+		return false;
 	}
 	private function takeBlockingAction($configVar, $reason){
 		if($this->googleSafetyCheckOK()){
@@ -573,11 +611,16 @@ class wfLog {
 			} else if($nb == 'neverBlockUA' || $nb == 'neverBlockVerified'){
 				if(wfCrawl::isGoogleCrawler()){ //Check the UA using regex
 					if($nb == 'neverBlockVerified'){
-						if(wfCrawl::verifyCrawlerPTR($this->googlePattern, wfUtils::getIP())){ //UA check passed, now verify using PTR if configured to
-							self::$gbSafeCache[$cacheKey] = false; //This is a verified Google crawler, so no we can't block it
-						} else {
-							self::$gbSafeCache[$cacheKey] = true; //This is a crawler claiming to be Google but it did not verify
+						if(wfCrawl::isGooglebot()){ //UA is the one, the only, the original Googlebot
+							if(wfCrawl::verifyCrawlerPTR($this->googlePattern, wfUtils::getIP())){ //UA check passed, now verify using PTR if configured to
+								self::$gbSafeCache[$cacheKey] = false; //This is a verified Google crawler, so no we can't block it
+							} else {
+								self::$gbSafeCache[$cacheKey] = true; //This is a crawler claiming to be Google but it did not verify
+							}
+						} else { //UA isGoogleCrawler, but is not Googlebot itself. E.g. feedreader, google-site-verification, etc.
+							self::$gbSafeCache[$cacheKey] = false; //This is a crawler with a google UA, but it's not Googlebot, so we don't block for safety. We can't verify these because they don't have a PTR record. e.g. Feedreader.
 						}
+							
 					} else { //neverBlockUA
 						self::$gbSafeCache[$cacheKey] = false; //User configured us to only do a UA check and this claims to be google so don't block
 					}
@@ -609,9 +652,10 @@ class wfLog {
 		$res = $this->getDB()->query("select ctime, level, type, msg from " . $this->statusTable . " where ctime > %f order by ctime asc", $lastCtime);
 		$results = array();
 		$lastTime = false;
+		$timeOffset = 3600 * get_option('gmt_offset');
 		while($rec = mysql_fetch_assoc($res)){
 			//$rec['timeAgo'] = wfUtils::makeTimeAgo(time() - $rec['ctime']);
-			$rec['date'] = date('M d H:i:s', $rec['ctime']);
+			$rec['date'] = date('M d H:i:s', $rec['ctime'] + $timeOffset);
 			array_push($results, $rec);
 		}
 		return $results;
@@ -620,8 +664,9 @@ class wfLog {
 		$res = $this->getDB()->query("select ctime, level, type, msg from " . $this->statusTable . " where level = 10 order by ctime desc limit 100");
 		$results = array();
 		$lastTime = false;
+		$timeOffset = 3600 * get_option('gmt_offset');
 		while($rec = mysql_fetch_assoc($res)){
-			$rec['date'] = date('M d H:i:s', $rec['ctime']);
+			$rec['date'] = date('M d H:i:s', $rec['ctime'] + $timeOffset);
 			array_push($results, $rec);
 			if(strpos($rec['msg'], 'SUM_PREP:') === 0){
 				break;

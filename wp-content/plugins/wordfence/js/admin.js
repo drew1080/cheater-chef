@@ -30,9 +30,13 @@ window['wordfenceAdmin'] = {
 	blockedCountriesPending: [],
 	ownCountry: "",
 	schedStartHour: false,
+	currentPointer: false,
+	countryMap: false,
+	countryCodesToSave: "",
 	init: function(){
 		this.nonce = WordfenceAdminVars.firstNonce; 
 		this.debugOn = WordfenceAdminVars.debugOn == '1' ? true : false;
+		this.tourClosed = WordfenceAdminVars.tourClosed == '1' ? true : false;
 		var startTicker = false;
 		if(jQuery('#wordfenceMode_scan').length > 0){
 			this.mode = 'scan';
@@ -42,28 +46,60 @@ window['wordfenceAdmin'] = {
 			this.noScanHTML = jQuery('#wfNoScanYetTmpl').tmpl().html();
 			this.loadIssues();
 			this.startActivityLogUpdates();
+			if(! this.tourClosed){
+				this.scanTourStart();
+			}
 		} else if(jQuery('#wordfenceMode_activity').length > 0){
 			this.mode = 'activity';
 			this.activityMode = 'hit';
 			startTicker = true;
+			if(! this.tourClosed){
+				var self = this;
+				this.tour('wfWelcomeContent3', 'wfHeading', 'top', 'left', "Learn about IP Blocking", function(){ self.tourRedir('WordfenceBlockedIPs'); });
+			}
 		} else if(jQuery('#wordfenceMode_options').length > 0){
 			this.mode = 'options';
 			jQuery('.wfConfigElem').change(function(){ jQuery('#securityLevel').val('CUSTOM'); });
 			this.updateTicker(true);
 			startTicker = true;
+			if(! this.tourClosed){
+				var self = this;
+				this.tour('wfContentBasicOptions', 'wfMarkerBasicOptions', 'top', 'left', "Learn about Live Traffic Options", function(){ 
+					self.tour('wfContentLiveTrafficOptions', 'wfMarkerLiveTrafficOptions', 'bottom', 'left', "Learn about Scanning Options", function(){
+						self.tour('wfContentScansToInclude', 'wfMarkerScansToInclude', 'bottom', 'left', "Learn about Firewall Rules", function(){
+							self.tour('wfContentFirewallRules', 'wfMarkerFirewallRules', 'bottom', 'left', "Learn about Login Security", function(){
+								self.tour('wfContentLoginSecurity', 'wfMarkerLoginSecurity', 'bottom', 'left', "Learn about Other Options", function(){
+									self.tour('wfContentOtherOptions', 'wfMarkerOtherOptions', 'bottom', 'left', false, false);
+									});
+								});
+							});
+						});
+					});
+			}
 		} else if(jQuery('#wordfenceMode_blockedIPs').length > 0){
 			this.mode = 'blocked';
 			this.staticTabChanged();
 			this.updateTicker(true);
 			startTicker = true;
+			if(! this.tourClosed){
+				var self = this;
+				this.tour('wfWelcomeContent4', 'wfHeading', 'top', 'left', "Learn how to Block Countries", function(){ self.tourRedir('WordfenceCountryBlocking'); });
+			}
 		} else if(jQuery('#wordfenceMode_countryBlocking').length > 0){
 			this.mode = 'countryBlocking';
 			startTicker = false;
-			this.drawBlockedCountries();
+			if(! this.tourClosed){
+				var self = this;	
+				this.tour('wfWelcomeContentCntBlk', 'wfHeading', 'top', 'left', "Learn how to Schedule Scans", function(){ self.tourRedir('WordfenceScanSchedule'); });
+			}
 		} else if(jQuery('#wordfenceMode_scanScheduling').length > 0){
 			this.mode = 'scanScheduling';
 			startTicker = false;
 			this.sched_modeChange();
+			if(! this.tourClosed){
+				var self = this;	
+				this.tour('wfWelcomeContentScanSched', 'wfHeading', 'top', 'left', "Learn how to Customize Wordfence", function(){ self.tourRedir('WordfenceSecOpt'); });
+			}
 		} else {
 			this.mode = false;
 		}
@@ -74,6 +110,59 @@ window['wordfenceAdmin'] = {
 			}
 			jQuery(document).bind('cbox_closed', function(){ self.colorboxIsOpen = false; self.colorboxServiceQueue(); });
 		}
+	},
+	scanTourStart: function(){
+		var self = this;
+		this.tour('wfWelcomeContent1', 'wfHeading', 'top', 'left', "Continue the Tour", function(){ 
+			self.tour('wfWelcomeContent2', 'wfHeading', 'top', 'left', "Learn how to use Wordfence", function(){
+				self.tour('wfWelcomeContent3', 'wfHeading', 'top', 'left', "Learn about Live Traffic", function(){ self.tourRedir('WordfenceActivity'); });
+				});
+			});
+	},
+	tourRedir: function(menuItem){
+		window.location.href = 'admin.php?page=' + menuItem;
+	},
+	tourFinish: function(){
+		this.ajax('wordfence_tourClosed', {}, function(res){});
+	},
+	tour: function(contentID, elemID, edge, align, buttonLabel, buttonCallback){
+		var self = this;
+		if(this.currentPointer){
+			this.currentPointer.pointer('destroy');
+			this.currentPointer = false;
+		}
+		var options = {
+			buttons: function(event, t){
+				var buttonElem = jQuery('<div id="wfTourButCont"><a id="pointer-close" style="margin-left:5px" class="button-secondary">End the Tour</a></div><div><a id="wfRateLink" href="http://wordpress.org/extend/plugins/wordfence/" target="_blank" style="font-size: 10px; font-family: Verdana;">Help spread the word by rating us 5&#9733; on WordPress.org</a></div>');
+				buttonElem.find('#pointer-close').bind('click.pointer', function (evtObj) {
+					var evtSourceElem = evtObj.srcElement ? evtObj.srcElement : evtObj.target;
+					if(evtSourceElem.id == 'wfRateLink'){
+						return true;
+					}
+					self.tourFinish();
+					t.element.pointer('close');
+					return false;
+					});
+				return buttonElem;
+			},
+			close: function(){},
+			content: jQuery('#' + contentID).tmpl().html(),
+			pointerWidth: 400,
+			position: {
+				edge: edge,
+				align: align,
+				}
+			};
+		this.currentPointer = jQuery('#' + elemID).pointer(options).pointer('open');
+		if(buttonLabel && buttonCallback){
+			jQuery('#pointer-close').after('<a id="pointer-primary" class="button-primary">' + buttonLabel + '</a>');
+			jQuery('#pointer-primary').click(buttonCallback);
+		}
+	},
+	startTourAgain: function(){
+		this.ajax('wordfence_startTourAgain', {}, function(res){});
+		this.tourClosed = false;
+		this.scanTourStart();
 	},
 	showLoading: function(){
 		this.removeLoading();
@@ -861,78 +950,71 @@ window['wordfenceAdmin'] = {
 	setOwnCountry: function(code){
 		this.ownCountry = (code + "").toUpperCase();
 	},
-	addBlockedCountry: function(code, name){
-		code = (code + "").toUpperCase();
-		if(code == this.ownCountry){
-			this.colorbox('400px', "Please confirm blocking yourself", "You are about to block your own country. This could lead to you being locked out. Please make sure that your user profile on this machine has a current and valid email address and make sure you know what it is. That way if you are locked out, you can send yourself an unlock email. If you're sure you want to block your own country, click 'Confirm' below, otherwise click 'Cancel'.<br />" +
-				'<input type="button" name="but1" value="Confirm" onclick="jQuery.colorbox.close(); WFAD.addBlockedCountryConfirm(\'' + code + '\',\'' + name + '\');" />&nbsp;<input type="button" name="but1" value="Cancel" onclick="jQuery.colorbox.close();" />');
-		} else {
-			this.addBlockedCountryConfirm(code, name);
-		}
-	},
-	addBlockedCountryConfirm: function(code, name){
-		var exists = false;
-		for(var i = 0; i < this.blockedCountriesPending.length; i++){
-			if(this.blockedCountriesPending[i][0] == code){
-				return;
-			}
-		}
-		this.blockedCountriesPending.push([code, name]);
-		this.drawBlockedCountries();
-	},
 	loadBlockedCountries: function(str){
 		var codes = str.split(',');
-		var self = this;
-		jQuery("#wfBlockedCountry > option").each(function() {
-			for(var i = 0; i < codes.length; i++){
-				if(codes[i] == this.value){
-					self.addBlockedCountryConfirm(this.value, this.text);
-				}
-			}
-			});
-		this.drawBlockedCountries();
-	},
-	drawBlockedCountries: function(){
-		var html = "";
-		var self = this;
-		if(this.blockedCountriesPending.length < 1){
-			jQuery('#wfCountryList').html('<span style="color: #999;">There are no countries currently blocked.</span>');
-			return;
+		for(var i = 0; i < codes.length; i++){
+			jQuery('#wfCountryCheckbox_' + codes[i]).prop('checked', true);
 		}
-		jQuery("#wfBlockedCountry > option").each(function() {
-			for(var i = 0; i < self.blockedCountriesPending.length; i++){
-				if(self.blockedCountriesPending[i][0] == this.value){
-					html += "Blocking: " + this.text + '&nbsp;&nbsp;<a href="#" onclick="WFAD.removeBlockedCountry(\'' + this.value + '\'); return false;">[remove]</a><br />';
-				}
-			}
-			});
-		jQuery('#wfCountryList').html(html);
-
-	},
-	removeBlockedCountry: function(code){
-		var newArr = [];
-		for(var i = 0; i < this.blockedCountriesPending.length; i++){
-			if(this.blockedCountriesPending[i][0] != code){
-				newArr.push(this.blockedCountriesPending[i]);
-			}
-		}
-		this.blockedCountriesPending = newArr;
-		this.drawBlockedCountries();
 	},
 	saveCountryBlocking: function(){
 		var action = jQuery('#wfBlockAction').val();
 		var redirURL = jQuery('#wfRedirURL').val();
+		var bypassRedirURL = jQuery('#wfBypassRedirURL').val();
+		var bypassRedirDest = jQuery('#wfBypassRedirDest').val();
+		var bypassViewURL = jQuery('#wfBypassViewURL').val();
+
 		if(action == 'redir' && (! /^https?:\/\/[^\/]+/i.test(redirURL))){
 			this.colorbox('400px', "Please enter a URL for redirection", "You have chosen to redirect blocked countries to a specific page. You need to enter a URL in the text box provided that starts with http:// or https://");
 			return;
 		}
+		if( bypassRedirURL || bypassRedirDest ){
+			if(! (bypassRedirURL && bypassRedirDest)){
+				this.colorbox('400px', "Missing data from form", "If you want to set up a URL that will bypass country blocking, you must enter a URL that a visitor can hit and the destination they will be redirected to. You have only entered one of these components. Please enter both.");
+				return;
+			}
+			if(bypassRedirURL == bypassRedirDest){
+				this.colorbox('400px', "URLs are the same", "The URL that a user hits to bypass country blocking and the URL they are redirected to are the same. This would cause a circular redirect. Please fix this.");
+				return;
+			}
+		}
+		if(bypassRedirURL && (! /^(?:\/|http:\/\/)/.test(bypassRedirURL))){ this.invalidCountryURLMsg(bypassRedirURL); return; }
+		if(bypassRedirDest && (! /^(?:\/|http:\/\/)/.test(bypassRedirDest))){ this.invalidCountryURLMsg(bypassRedirDest); return; }
+		if(bypassViewURL && (! /^(?:\/|http:\/\/)/.test(bypassViewURL))){ this.invalidCountryURLMsg(bypassViewURL); return; }
+
+		var codesArr = [];
+		var ownCountryBlocked = false;
+		var self = this;
+		jQuery('.wfCountryCheckbox').each(function(idx, elem){
+			if(jQuery(elem).is(':checked')){
+				var code = jQuery(elem).val();
+				codesArr.push(code);
+				if(code == self.ownCountry){
+					ownCountryBlocked = true;
+				}
+			}
+			});
+		var codes = codesArr.join(',');
+		this.countryCodesToSave = codes;
+		if(ownCountryBlocked){
+			this.colorbox('400px', "Please confirm blocking yourself", "You are about to block your own country. This could lead to you being locked out. Please make sure that your user profile on this machine has a current and valid email address and make sure you know what it is. That way if you are locked out, you can send yourself an unlock email. If you're sure you want to block your own country, click 'Confirm' below, otherwise click 'Cancel'.<br />" +
+				'<input type="button" name="but1" value="Confirm" onclick="jQuery.colorbox.close(); WFAD.confirmSaveCountryBlocking();" />&nbsp;<input type="button" name="but1" value="Cancel" onclick="jQuery.colorbox.close();" />');
+		} else {
+			this.confirmSaveCountryBlocking();
+		}
+	},
+	invalidCountryURLMsg: function(URL){
+		this.colorbox('400px', "Invalid URL", "URL's that you provide for bypassing country blocking must start with '/' or 'http://' without quotes. The URL that is invalid is: " + URL);
+		return;
+	},
+	confirmSaveCountryBlocking: function(){
+		var action = jQuery('#wfBlockAction').val();
+		var redirURL = jQuery('#wfRedirURL').val();
 		var loggedInBlocked = jQuery('#wfLoggedInBlocked').is(':checked') ? '1' : '0';
 		var loginFormBlocked = jQuery('#wfLoginFormBlocked').is(':checked') ? '1' : '0';
-		var codesArr = [];
-		for(var i = 0; i < this.blockedCountriesPending.length; i++){
-			codesArr.push(this.blockedCountriesPending[i][0]);
-		}
-		var codes = codesArr.join(',');
+		var bypassRedirURL = jQuery('#wfBypassRedirURL').val();
+		var bypassRedirDest = jQuery('#wfBypassRedirDest').val();
+		var bypassViewURL = jQuery('#wfBypassViewURL').val();
+
 		jQuery('.wfAjax24').show();
 		var self = this;
 		this.ajax('wordfence_saveCountryBlocking', {
@@ -940,7 +1022,10 @@ window['wordfenceAdmin'] = {
 			redirURL: redirURL,
 			loggedInBlocked: loggedInBlocked,
 			loginFormBlocked: loginFormBlocked,
-			codes: codes
+			bypassRedirURL: bypassRedirURL,
+			bypassRedirDest: bypassRedirDest,
+			bypassViewURL: bypassViewURL,
+			codes: this.countryCodesToSave
 			}, function(res){ 
 				jQuery('.wfAjax24').hide();
 				self.pulse('.wfSavedMsg');
@@ -1024,10 +1109,12 @@ window['wordfenceAdmin'] = {
 			schedMode: schedMode,
 			schedTxt: scheduleTxt
 			}, function(res){
+				jQuery('#wfScanStartTime').html(res.nextStart);
 				jQuery('.wfAjax24').hide();
 				self.pulse('.wfSaveMsg');
 				});
 	}
+
 };
 window['WFAD'] = window['wordfenceAdmin'];
 }
