@@ -1030,7 +1030,7 @@ form,
 table,
 address, 
 blockquote {
-	margin:1.6em 0;
+	margin:0em 0;
 }
 
 h1 {
@@ -1387,7 +1387,7 @@ form div {
 	border-radius:6px;
 	font-size:13px;
 	margin:0 0 20px;
-	padding:20px;
+	padding:25px;
 }
 
 #widgets {
@@ -1498,11 +1498,11 @@ form div {
 .widget-title, 
 .widget-title-home h3 {
 	display:block;
-	font-size:24px;
+	font-size:20px;
 	font-weight:700;
-	line-height:23px;
+	line-height:19px;
 	margin:0;
-	padding:0 0 20px 0;
+	padding:0 0 5px 0;
 	text-align:left;
 }
 
@@ -2334,6 +2334,8 @@ table.cart td.actions .coupon .input-text {
 
 #footer-wrapper .grid.col-940 {
 	margin:0;
+	text-align: center;
+  padding-bottom: 10px;
 }
 
 .scroll-top {
@@ -2675,3 +2677,8 @@ BDO[DIR="rtl"] {
     }
 }
 /*"The last 29 days of the month are the hardest."- Nikola Tesla*/
+
+/* Custom Special Recent Posts */
+.srp-content-box {
+  float: left;
+}
