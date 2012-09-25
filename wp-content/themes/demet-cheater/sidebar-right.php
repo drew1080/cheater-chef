@@ -8,6 +8,10 @@
       <?php endif; ?>
     </ul>
 
+    <script type="text/javascript"
+    src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+    </script>
+    
     <div class="sidebaradbox">
       <?php sidebar_ads_125(); ?>
     </div>

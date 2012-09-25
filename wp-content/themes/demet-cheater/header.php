@@ -35,8 +35,21 @@
     <script src="<?php bloginfo('template_directory'); ?>/js/cc-master.js" type="text/javascript"></script>
 
   <?php echo get_theme_option("head") . "\n";  wp_head(); ?>
+  <script type="text/javascript"><!--
+  google_ad_client = "ca-pub-7500368659443924";
+  /* Test Cheater Chef Ad Right Sidebar */
+  google_ad_slot = "0240467679";
+  google_ad_width = 180;
+  google_ad_height = 150;
+  //-->
+  </script>
 </head>
 <body <?php body_class(); ?>>
+<script type="text/javascript">
+window.addEvent('domready', function() {			
+  var myMenu = new MenuMatic();
+});	
+</script>
 <div id="fb-root"></div>
 <script>(function(d, s, id) {
   var js, fjs = d.getElementsByTagName(s)[0];
