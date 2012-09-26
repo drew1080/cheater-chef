@@ -104,6 +104,7 @@ function postMash_getPages(){
 	$query_post .= "SELECT * FROM $wpdb->posts ";
 	/* BEGIN ID/LAB CUSTOM CODE */
 	if( isset($_GET['page_id']) && $_GET['page_id'] != '0') {
+    // ID/LAB note: for custom installs, run post_date DESC to order the posts first, click update, then change back to menu_order
 		$query_post .=	" WHERE post_status = 'publish' AND $wpdb->posts.post_type = '" . $_GET['page_id'] ."' ORDER BY menu_order ASC";
 	} else {
 		$query_post .=	" WHERE post_status = 'publish' AND $wpdb->posts.post_type = 'page' ORDER BY menu_order ASC";
