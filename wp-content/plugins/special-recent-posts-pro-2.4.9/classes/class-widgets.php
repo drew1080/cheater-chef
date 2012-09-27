@@ -16,6 +16,7 @@ class WDG_SpecialRecentPostsPro extends WP_Widget {
 
 	// Declaring global plugin values.
 	private $plugin_args;
+	private $dynamic_widget_title;
 
 /*
 | ---------------------------------------------
@@ -24,7 +25,7 @@ class WDG_SpecialRecentPostsPro extends WP_Widget {
 */
 	// Class Constructor.
 	// In this section we define the widget global values.
-	function WDG_SpecialRecentPostsPro() {
+	function WDG_SpecialRecentPostsPro($instance) {
 	
 		// Setting up widget options.
         $widget_ops = array (
@@ -32,8 +33,13 @@ class WDG_SpecialRecentPostsPro extends WP_Widget {
             'description' => __('The Special Recent Posts PRO Edition widget. Drag to configure.', SRP_TRANSLATION_ID)
         );
 		
-        // Assigning widget options.
-		$this->WP_Widget('WDG_SpecialRecentPostsPro', 'Special Recent Posts PRO Edition', $widget_ops);
+		// Displaying posts.
+		if (is_object($srp)) $srp->displayPosts(true, 'print');
+		
+		// CHEATER CHEF TODO : changing title
+		// http://codex.wordpress.org/Widgets_API
+    // Assigning widget options.
+		$this->WP_Widget('WDG_SpecialRecentPostsPro', 'Recent Posts', $widget_ops);
 		
 		// Assigning global plugin option values to local variable.
 		$this->plugin_args = get_option('srp_plugin_options');
@@ -165,7 +171,7 @@ class WDG_SpecialRecentPostsPro extends WP_Widget {
 			
 			// Displaying posts.
 			if (is_object($srp)) $srp->displayPosts(true, 'print');
-			
+  		
 			// Printing after widget stuff.
 			echo $after_widget;
 		}
