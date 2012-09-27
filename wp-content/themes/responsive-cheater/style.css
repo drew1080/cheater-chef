@@ -2760,3 +2760,8 @@ a.srp-widget-stringbreak-link {
 #searchform #searchsubmit {
   color: #933;
 }
+
+#widgets.top-widget {
+  margin: 15px 0 0 0;
+  padding: 0px;
+}
