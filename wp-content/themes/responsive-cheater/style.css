@@ -115,8 +115,8 @@ body {
 	-moz-font-smoothing:antialiased;
 	-webkit-font-smoothing:antialiased;
 /*  background:#efefef;*/
-	color:#404040;
-	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	color:black;
+	font-family: Arial, sans-serif;
 	font-size:14px;
 	font-smoothing:antialiased;
 	line-height:1.5em;
@@ -989,7 +989,7 @@ blockquote p {
 -------------------------------------------------------------- */
 h1, h2, h3, h4, h5, h6, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 	font-weight:700;
-	line-height:1em;
+	line-height:1.1em;
     word-wrap:break-word;
 }
 
@@ -2720,18 +2720,18 @@ BDO[DIR="rtl"] {
 }
 
 #cheater-featured-post .srp-post-title {
-  font-size: 50px;
+  font-size: 30px;
   text-align: center;
   letter-spacing: -1px;
   margin: 31px 0px;
 }
 
 #cheater-featured-post p {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 200;
   line-height: 27px;
   padding: 0 40px 0 40px;
-  text-align: center;
+  text-align: left;
 }
 
 #cheater-feature-post .srp-widget-singlepost {
@@ -2762,6 +2762,31 @@ a.srp-widget-stringbreak-link {
 }
 
 #widgets.top-widget {
-  margin: 15px 0 0 0;
+  margin: 36px 20px 0 0;
   padding: 0px;
+}
+
+#logo {
+  margin: 10px 0 5px 20px;
+}
+
+.srp-post-title {
+  font-size: 20px;
+}
+
+.srp-widget-excerpt {
+  font-size: 15px;
+}
+
+.srp-thumbnail-box {
+  padding: 0 10px 10px 0;
+}
+
+h4.srp-post-title {
+  margin: 0 0 .615em;
+}
+
+.post-entry {
+  font-size: 15px;
+  line-height: 22px;
 }

@@ -37,7 +37,6 @@ if ( !defined('ABSPATH')) exit;
 				<?php elseif ( is_year() ) : ?>
 					<?php printf( __( 'Yearly Archives: %s', 'responsive' ), '<span>' . get_the_date( 'Y' ) . '</span>' ); ?>
 				<?php else : ?>
-					<?php _e( 'Blog Archives', 'responsive' ); ?>
 				<?php endif; ?>
 			</h6>
                     
