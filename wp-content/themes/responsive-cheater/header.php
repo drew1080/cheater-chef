@@ -37,6 +37,8 @@ if ( !defined('ABSPATH')) exit;
 <?php wp_enqueue_style('responsive-style', get_stylesheet_uri(), false, '1.7.5');?>
 
 <?php wp_head(); ?>
+
+<link rel="stylesheet" href="<?php echo get_template_directory_uri(); ?>/css/cheater.css" type="text/css" media="screen" />
 </head>
 
 <body <?php body_class(); ?>>
