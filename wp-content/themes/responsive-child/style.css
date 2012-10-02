@@ -1,0 +1,108 @@
+/*
+Theme Name:     Responsive Cheater Child
+Theme URI:      http://example.com/
+Description:    Child theme for the Responsive Cheater
+Author:         Andrew Cobb
+Author URI:     http://example.com/about/
+Template:       responsive
+Version:        0.1.0
+*/
+
+/* Custom Special Recent Posts */
+.srp-content-box {
+  float: left;
+}
+
+/* Home */
+.home-widgets .widget-wrapper {
+  min-height: 331px;
+}
+
+#cheater-featured-post {
+  background-color: white;
+}
+
+#cheater-featured-post div.srp-content-box {
+  float: inherit;
+}
+
+#cheater-featured-post div.srp-thumbnail-box {
+  float: right;
+  padding-right: 0px !important;
+}
+
+#cheater-featured-post .srp-post-title {
+  font-size: 30px;
+  text-align: center;
+  letter-spacing: -1px;
+  margin: 15px 0px;
+}
+
+#cheater-featured-post p {
+  font-size: 16px;
+  font-weight: 200;
+  line-height: 27px;
+  padding: 0 15px 0 15px;
+  text-align: left;
+}
+
+#cheater-feature-post .srp-widget-singlepost {
+  border-bottom: none !important;
+}
+
+a.srp-widget-stringbreak-link {
+  padding-left:3px !important;
+}
+
+.home-widgets h3 {
+  color: #933;
+}
+
+.menu li.search-nav {
+  float: right;
+  padding: 6px 6px 0 0;
+}
+
+/* Search*/
+#searchform #s {
+  width: 180px;
+  font-size: 12px;
+}
+
+#searchform #searchsubmit {
+  color: #933;
+}
+
+#widgets.top-widget {
+  margin: 36px 20px 0 0;
+  padding: 0px;
+}
+
+#logo {
+  margin: 10px 0 5px 20px;
+}
+
+.srp-post-title {
+  font-size: 20px;
+}
+
+.srp-widget-excerpt {
+  font-size: 15px;
+}
+
+.srp-thumbnail-box {
+  padding: 0 10px 10px 0;
+}
+
+h4.srp-post-title {
+  margin: 0 0 .615em;
+}
+
+.post-entry {
+  font-size: 15px;
+  line-height: 22px;
+}
+
+img.srp-widget-thmb {
+  max-width: 100% !important;
+}
