@@ -26,21 +26,7 @@ if ( !defined('ABSPATH')) exit;
 <div id="footer" class="clearfix">
 
     <div id="footer-wrapper">
-      
-        <div class="grid col-940">
-          <script type="text/javascript"><!--
-          google_ad_client = "ca-pub-7500368659443924";
-          /* Cheatchef wide and short */
-          google_ad_slot = "8433552196";
-          google_ad_width = 728;
-          google_ad_height = 90;
-          //-->
-          </script>
-          <script type="text/javascript"
-          src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-          </script>
-        </div>
-        
+    
         <div class="grid col-940">
         
         <div class="grid col-540">
@@ -54,7 +40,6 @@ if ( !defined('ABSPATH')) exit;
 				?>
          <?php } ?>
          </div><!-- end of col-540 -->
-         
          
          <div class="grid col-380 fit">
          <?php $options = get_option('responsive_theme_options');

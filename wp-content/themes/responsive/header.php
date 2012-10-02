@@ -27,18 +27,15 @@ if ( !defined('ABSPATH')) exit;
 
 <meta charset="<?php bloginfo('charset'); ?>" />
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
 <title><?php wp_title('&#124;', true, 'right'); ?><?php bloginfo('name'); ?></title>
 
 <link rel="profile" href="http://gmpg.org/xfn/11" />
 <link rel="pingback" href="<?php bloginfo('pingback_url'); ?>" />
 
-<?php wp_enqueue_style('responsive-style', get_stylesheet_uri(), false, '1.7.5');?>
+<?php wp_enqueue_style('responsive-style', get_stylesheet_uri(), false, '1.7.9');?>
 
 <?php wp_head(); ?>
-
-<link rel="stylesheet" href="<?php echo get_template_directory_uri(); ?>/css/cheater.css" type="text/css" media="screen" />
 </head>
 
 <body <?php body_class(); ?>>
