@@ -14,6 +14,92 @@ Version: 1.0
 /* =Start Here
 -------------------------------------------------------------- */
 
+body {
+  background: white;
+  font-family: Arial, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+  line-height: 1em;
+}
+
+a {
+  color: #933;
+}
+
+p {
+  margin: 0 0 1em 0;
+}
+
+form {
+  margin: 0em 0;
+}
+
+.widget-wrapper {
+  padding: 25px;
+}
+
+.widget-title-home h3 {
+   font-size:20px;
+   line-height:19px;
+   padding:0 0 5px 0;
+}
+
+.menu {
+	background-color:#ffffcc;
+  background-image:-webkit-gradient(linear, left top, left bottom, from(#ffffcc), to(#ffcc66));
+  background-image:-webkit-linear-gradient(top, #ffffcc, #ffcc66);
+  background-image:-moz-linear-gradient(top, #ffffcc, #ffcc66);
+  background-image:-ms-linear-gradient(top, #ffffcc, #ffcc66);
+  background-image:-o-linear-gradient(top, #ffffcc, #ffcc66);
+  background-image:linear-gradient(top, #ffffcc, #ffcc66);
+	clear:both;
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#ffffcc, endColorstr=#ffcc66);
+	margin:0 auto;
+}
+
+.menu a {
+  text-shadow: none !important;
+  border-left:1px solid #993333;
+  color:#993333;
+}
+
+.menu a:hover {
+  background-color:#ff9933;
+  background-image:-webkit-gradient(linear, left top, left bottom, from(#ff9933), to(#cc6633));
+  background-image:-webkit-linear-gradient(top, #ff9933, #cc6633);
+  background-image:-moz-linear-gradient(top, #ff9933, #cc6633);
+  background-image:-ms-linear-gradient(top, #ff9933, #cc6633);
+  background-image:-o-linear-gradient(top, #ff9933, #cc6633);
+  background-image:linear-gradient(top, #ff9933, #cc6633);
+  color:white;
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#ff9933, endColorstr=#cc6633);
+}
+
+.menu .current_page_item a {
+  background-color: #343434;
+  background-color:#993300;
+  color:#ffffcc;
+}
+
+menu .current-menu-item a {
+  background-color:#993300;
+  color:#ffffcc;
+}
+
+.menu .children a {
+  color:#933;
+}
+
+.menu li li a {
+  color:#933;
+}
+
+.home .menu .current_page_item a {
+  color: #933;
+}
+
+
 
 /* Custom Special Recent Posts */
 .srp-content-box {
