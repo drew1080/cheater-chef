@@ -15,6 +15,7 @@ Version: 1.0
 -------------------------------------------------------------- */
 
 body {
+  color: black;
   background: white;
   font-family: Arial, sans-serif;
 }
@@ -169,6 +170,7 @@ a.srp-widget-stringbreak-link {
 #widgets.top-widget {
   margin: 36px 20px 0 0;
   padding: 0px;
+  width: 50%;
 }
 
 #logo {
@@ -196,11 +198,18 @@ h4.srp-post-title {
   line-height: 22px;
 }
 
-img.srp-widget-thmb {
+.srp-widget-thmblink img.srp-widget-thmb {
   max-width: 100% !important;
 }
 
+.home #wrapper {
+  margin: 20px auto 0px auto;
+}
 
+#footer-wrapper .grid.col-940 {
+  margin: 0 0 10px 0;
+  text-align: center;
+}
 
 
 

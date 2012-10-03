@@ -5,3 +5,5 @@ db-backups/*
 wp-content/debug.log
 docs/*
 wp-config.php
+wp-content/plugins/special-recent-posts-pro-2.4.9/cache/*
+wp-content/plugins/wp-google-fonts/*
