@@ -23,7 +23,7 @@ if ( !defined('ABSPATH')) exit;
 	    )
             return;
     ?>
-    <div id="widgets" class="top-widget">
+    <div id="cc-widgets" class="top-widget">
         <?php responsive_widgets(); // above widgets hook ?>
         
             <?php if (is_active_sidebar('top-widget')) : ?>

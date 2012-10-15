@@ -547,7 +547,10 @@ function responsive_breadcrumb_lists () {
             'name' => __('Home Widget 3', 'responsive'),
             'description' => __('Area Eight - sidebar-home.php', 'responsive'),
             'id' => 'home-widget-3',
-            'before_title' => '<div id="widget-title-three" class="widget-title-home"><h3>',
+            // CHEATER CHEF CUSTOM CODE
+            //'before_title' => '<div id="widget-title-three" class="widget-title-home"><h3>',
+            'before_title' => '<div class="widget-title-home"><h3>',
+            // CHEATER CHEF CUSTOM CODE
             'after_title' => '</h3></div>',
             'before_widget' => '<div id="%1$s" class="widget-wrapper %2$s">',
             'after_widget' => '</div>'
