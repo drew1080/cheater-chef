@@ -215,6 +215,16 @@ h4.srp-post-title {
   text-align: center;
 }
 
+/* Small homepage boxes */
+#widgets div.srp-thumbnail-box {
+  display: block !important;
+  text-align: center;
+}
+
+div.srp-widget-container {
+  width: 100%;
+}
+
 
 
 /* =Media Print
