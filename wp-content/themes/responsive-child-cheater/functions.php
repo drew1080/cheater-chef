@@ -11,16 +11,29 @@
   ));
   
   function add_search_box($items, $args) {
+  
+           ob_start();
+           get_search_form();
+           $searchform = ob_get_contents();
+           ob_end_clean();
+  
+           $items .= '<li class="search-nav">' . $searchform . '</li>';
+  
+       return $items;
+     }
+  
+  add_filter('wp_nav_menu_items','add_search_box', 10, 2);
+  
+  function my_manage_columns( $columns ) {
+    unset($columns['analytics']);
+    return $columns;
+  }
 
-         ob_start();
-         get_search_form();
-         $searchform = ob_get_contents();
-         ob_end_clean();
-
-         $items .= '<li class="search-nav">' . $searchform . '</li>';
-
-     return $items;
-   }
-
-   add_filter('wp_nav_menu_items','add_search_box', 10, 2);
+  function my_column_init() {
+    add_filter( 'manage_posts_columns' , 'my_manage_columns' );
+    add_filter( 'manage_pages_columns' , 'my_manage_columns' );
+  }
+  
+  add_action( 'admin_init' , 'my_column_init' );   
+     
 ?>

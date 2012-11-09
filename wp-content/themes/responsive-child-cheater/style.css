@@ -24,6 +24,14 @@ h1, h2, h3, h4, h5, h6, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
   line-height: 1em;
 }
 
+ol, li {
+  vertical-align: top;
+}
+
+#widgets a {
+  vertical-align: top;
+}
+
 a {
   color: #933;
 }
@@ -224,6 +232,18 @@ h4.srp-post-title {
 div.srp-widget-container {
   width: 100%;
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
