@@ -1,0 +1,156 @@
+/*
+
+File:	 custom.css
+
+Description:	Custom styles for your theme
+
+
+To properly utilize custom.css you will have to mention a CSS class and it's new properties/values. For 
+
+instructions open the following article:
+
+http://templatic.com/docs/using-custom-css-for-theme-customizations/
+
+
+PS: Don't forget to activate custom.css in your theme settings area
+
+
+ADD YOUR CODE AFTER THIS ENDING COMMENT TAG -----------> */ 
+
+body {
+	background: white;
+}
+
+.header-wrap .header_featured_event {
+	margin: 0px;
+}
+
+/*.header_bg1 {
+	background-image: none;
+	background: rgb(255, 246, 179);
+}*/
+
+.header_bg1 {
+	border-top: none;
+	background-repeat: initial;
+	background-color: #8fc17e;
+}
+
+#header .header_right {
+	margin-top: 25px;
+}
+
+#site-description {
+	color: #2F4328;
+	text-shadow:none;
+	font-family: "Comic Sans MS", cursive, sans-serif;
+}
+
+div#menu-secondary .menu li a {
+	color: white;
+	text-shadow:none;
+}
+
+div#menu-secondary .menu .sub-menu li a {
+	color: #73B15E;
+	text-shadow:none;
+}
+
+#sidebar-after-header-2c {
+	display:none;
+}
+
+div#sidebar-subsidiary, div#sidebar-subsidiary-2c {
+	background: #f7f7f7;
+}
+
+.flexslider {
+	border-bottom: 3px double rgba(0, 0, 0, 0.1);
+	padding: 25px 0 25px !important;
+	margin: 0px auto 20px !important;
+}
+
+.flexslider .slides {
+	height: 415px;
+	overflow: hidden;
+}
+
+.flexslider .slides img {
+	max-width:685px !important;
+}
+
+div.flex-caption {
+	background: #73B15E;
+}
+
+#sidebar-subsidiary .textwidget {
+	font-size: 20px;
+	line-height: 28px;
+}
+
+#site-title {
+	padding: 12px 0;
+}
+
+#site-description {
+	padding: 13px 0 0;
+}
+
+/* Right sidebar twitter */
+#text-14 {
+	margin-top: 38px;
+}
+
+/* Right sidebar ad */
+#text-15 {
+	text-align: center;
+}
+
+#testimonials_widget-4 {
+	float:right !important;
+	width: 440px !important;
+}
+
+.footer {
+	background-color: #8fc17e;
+}
+
+#footer .credit, #footer .temp-logo {
+	display:none;
+}
+
+.footer .textwidget {
+	text-align: center;
+}
+
+.footer_widget h3, .footer h3, .footer a {
+	color: #2F4328;
+	text-shadow:none;
+}
+
+.footer a:hover {
+	color: black !important;
+	text-shadow:none;
+}
+
+.footer_widget ul li a {
+	color: #2F4328;
+	text-shadow:none;
+}
+
+.footer_widget ul li a:hover {
+	color: black !important;
+	text-shadow:none;
+}
+
+.footer_widget .column02 ol {
+	color: #d5d5d5;
+}
+
+.copyright {
+	color: #2F4328;
+}
+
+#footer .footer-content p > a {
+	color: #2F4328;
+}

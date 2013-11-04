@@ -1,0 +1,73 @@
+Templatic parent theme - Supreme.
+==============================================================================================
+
+13th April 2013 (1.0.3)
+----------------------------------------------------------------
+Autoupdate not working
+-----------------------------------------------------------------
+/css/admin_style.css - Added
+/templatic_login.php
+/library/admin/admin.php
+/functions.php
+/wp-updates-theme.php
+
+3rd April 2013 (1.0.3)
+----------------------------------------------------------------
+add latest pot file 
+-----------------------------------------------------------------
+/languages/supreme-en_EN.pot
+/languages/rainbow-en_EN.pot
+/library/functions/core.php
+
+1st April 2013 (1.0.3)
+----------------------------------------------------------------
+In IE slider images are stacked one on another before the page is fully loaded .
+-----------------------------------------------------------------
+fuctions.php
+library/functions/widgets.php
+
+8th March 2013 (1.0.3)
+----------------------------------------------------------------
+Warning resolved
+-----------------------------------------------------------------
+library/functions/widgets.php
+library/functions/shortcodes.php
+Supreme/functions.php
+Supreme/comments.php
+library/extensions/breadcrumb-trail.php
+
+
+28th February 2013 (1.0.2)
+----------------------------------------------------------------
+Moved some widgets from Tevolution plugin to Supreme parent theme 
+-----------------------------------------------------------------
+library/functions/widgets.php
+------------------------------------
+8th February 2013 (1.0.2)
+-------------------------------------
+Widget related issue - Solved.
+All the location related issue - Solve.
+.po and .mo files updated
+gravity form compatibility css - Added.
+flicker widget - Added.
+-------------------------------------
+
+-------------------------------------------------------------------------
+added excerpts option from tevolution to supreme theme customizer - Done.
+-------------------------------------------------------------------------
+functions.php
+templatic_customizer.php
+content.php
+
+
+11th January 2013
+-------------------------------------------------------------
+Issue of author biography option not work for bbpress - Solved.
+-------------------------------------------------------------
+
+
+8th Jan 2013
+----------------------------------------
+Provided auto updates feature in Supreme
+----------------------------------------
+
