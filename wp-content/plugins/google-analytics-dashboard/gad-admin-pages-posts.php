@@ -56,8 +56,8 @@ class GADAdminPagesPosts
       die($value);
     }
 
-    $post_id =  $_REQUEST['pid'];
-    $count =  $_REQUEST['count'];
+    $post_id = intval($_REQUEST['pid']);
+    $count = intval($_REQUEST['count']);
 
     // This is done to reduce the number of requests made at the same time
     if($count % 2 == 0) usleep(500000);
@@ -76,7 +76,7 @@ class GADAdminPagesPosts
     $url_data = parse_url($link_value);
     $link_uri = substr($url_data['path'] . (isset($url_data['query']) ? ('?' . $url_data['query']) : ''), -20);
 
-    $is_draft = $wpdb->get_var("SELECT count(1) FROM $wpdb->posts WHERE post_status = 'draft' AND ID = $post_id");
+    $is_draft = $wpdb->get_var($wpdb->prepare("SELECT count(1) FROM $wpdb->posts WHERE post_status = 'draft' AND ID = %d", $post_id));
     if($link_uri == '' || (isset($is_draft) && $is_draft > 0))
     {
       echo "";

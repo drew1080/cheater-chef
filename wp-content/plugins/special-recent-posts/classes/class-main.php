@@ -3,12 +3,12 @@
 | ----------------------------------------------------------
 | File        : class-main.php
 | Project     : Special Recent Posts FREE Edition plugin for Wordpress
-| Version     : 1.9.6
+| Version     : 1.9.9
 | Description : This is the main plugin class which handles
 |               the core of the Special Recent Post PRO plugin.
 | Author      : Luca Grandicelli
 | Author URL  : http://www.lucagrandicelli.com
-| Plugin URL  : http://wordpress.org/extend/plugins/special-recent-posts/
+| Plugin URL  : http://www.specialrecentposts.com
 | Copyright (C) 2011-2012  Luca Grandicelli
 | ----------------------------------------------------------
 */
@@ -41,6 +41,9 @@ class SpecialRecentPostsFree {
 	
 	// Defining current widget instance id.
 	private $widget_id;
+
+	// Defining global post thumbnail html outputs.
+	private $postThumbsOutput = array();
 
 /*
 | ---------------------------------------------
@@ -244,6 +247,9 @@ class SpecialRecentPostsFree {
 			
 			// Building image path.
 			$image_path = $_SERVER["DOCUMENT_ROOT"] . $image_to_render;
+
+			// Building image path.
+			$image_path = (is_multisite() && isset($blog_id) && $blog_id > 0) ? getcwd() . $image_to_render : $_SERVER["DOCUMENT_ROOT"] . $image_to_render;
 			
 		} else {
 		
@@ -333,7 +339,7 @@ class SpecialRecentPostsFree {
 		$noimage_url = ($this->plugin_args['srp_noimage_url'] != '') ? $this->plugin_args['srp_noimage_url'] : SRP_PLUGIN_URL . SRP_DEFAULT_THUMB;
 
 		// Returning default thumbnail image.
-		return $this->srp_create_tag('img', null, array('class' => 'srp-widget-thmb', 'src' => $noimage_url, 'alt' => __('No thumbnail available'), 'width' => $thumb_width, 'height' => $thumb_height));
+		return '<img src="' . $noimage_url . '" class="srp-widget-thmb" width="' . $thumb_width . '" height="' . $thumb_height . '" alt="' . __('No thumbnail available') . '" />';
 	}
 
 	/*
@@ -341,60 +347,13 @@ class SpecialRecentPostsFree {
 	| This is the main method which retrieves the first image url in the post content.
 	| ---------------------------------------------------------------------------------
 	*/
-	private function getFirstImageUrl($thumb_width, $thumb_height, $post_title) {
-	
-		// Including global WP Enviroment.
-		global $post, $posts;
+	private function getFirstImageUrl($post, $thumb_width, $thumb_height, $post_title) {
 		
 		// Using REGEX to find the first occurrence of an image tag in the post content.
-		$output = preg_match_all('/<img.+src=[\'"]([^\'"]+)[\'"].*>/i', $post->post_content, $matches);
+		$output = preg_match_all('/<img [^>]*src=["|\']([^"|\']+)/i', $post->post_content, $matches);
 		
-		//Getting images attached to the post.
-		$attachment_args = array(
-			'post_type'      => 'attachment',
-			'post_mime_type' => 'image',
-			'numberposts'    => -1,
-			'order'          => 'ASC',
-			'post_status'    => null,
-			'post_parent'    => $post->ID
-		);
-		
-		$attachments = get_posts($attachment_args);
-		
-		// Setting up final attachment url to use as source for resize.
-		$attachment_url_final = null;
-		
-		// Check for attachments.
-		if (isset($attachments) && (!empty($attachments))) {
+		if (!empty($output)) {
 
-			// Looping through sizes to check which one is the next higher value to the desired thumbnail size.
-			foreach ($this->wp_thumb_sizes as $size) {
-			
-				// Getting attachment data.
-				$attach_url = wp_get_attachment_image_src($attachments[0]->ID, $size);
-				
-				// Checking if attachment size is higher than the desired thumbnail size, starting from the smallest wp one available, 'thumbnail'.
-				if ( ($attach_url[1] > $thumb_width) && ($attach_url[2] > $thumb_height) ) {
-				
-					// First available size.
-					$attachment_url_final = $attach_url;
-					break;
-					
-				} else {
-					
-					// Original image is larger than the desired thumbnail dimensions. So stretch it starting from the largest size available.
-					$attachment_url_final = wp_get_attachment_image_src($attachments[0]->ID, 'full');
-				}
-			}
-			
-			// Getting attachment URL.
-			$attachment_url = parse_url($attachment_url_final[0]);
-			
-			// Getting the first image path from attachment metadata.
-			$first_img = $attachment_url["path"];
-			
-		}	else if (!empty($output)) {
-			
 			// Image has been found. Analyize and extract the image src url.
 			$first_img = $matches[1][0];
 			
@@ -415,12 +374,29 @@ class SpecialRecentPostsFree {
 		
 		// Building image path.
 		$image_to_render = $parts["path"];
+
+		// Checking if this is a multisite blog, then adjust image paths.
+		if(is_multisite()) {
+
+			// Retrieving global multi site info.
+			global $current_blog, $blog_id;
+
+			// Is this is a network's blog.
+			if (isset($blog_id) && $blog_id > 0) {
+				$imageParts = explode('/files/', $image_to_render);
+				if (isset($imageParts[1])) {
+
+					// Fetching multisite image path.
+					$image_to_render = '/wp-content/blogs.dir/' . $blog_id . '/files/' . $imageParts[1];
+				}
+			}
+		}
 		
 		// Checking if the thumbnail already exists. In this case, simply render it. Otherwise generate it.
 		if ( (file_exists(SRP_PLUGIN_DIR . $imgabs_cache)) || ($this->generateGdImage($post, 'firstimage', $image_to_render, SRP_PLUGIN_DIR . $imgabs_cache, $thumb_width, $thumb_height, $this->widget_args["thumbnail_rotation"])) ) {
 			
 			// Building thumbnail image tag.
-			return $this->srp_create_tag('img', null, array('class' => 'srp-widget-thmb', 'src' => SRP_PLUGIN_URL . $imgabs_cache, 'alt' => $post_title, 'width' => $this->widget_args["thumbnail_width"], 'height' => $this->widget_args["thumbnail_height"]));
+			return '<img src="' . SRP_PLUGIN_URL . $imgabs_cache . '" class="srp-widget-thmb" width="' . $this->widget_args["thumbnail_width"] . '" height="' . $this->widget_args["thumbnail_height"] . '" alt="' . $post_title . '" />';
 		
 		} else {
 		
@@ -490,19 +466,19 @@ class SpecialRecentPostsFree {
 				$featured_thumb_src = SRP_PLUGIN_URL . $featured_thumb_cache;
 				
 				// Generating Image HTML Tag.
-				$featured_htmltag = $this->srp_create_tag('img', null, array('class' => 'srp-widget-thmb', 'src' => $featured_thumb_src, 'alt' => the_title_attribute(array('echo' => 0))));
-				
+				$featured_htmltag = '<img src="' . $featured_thumb_src . '" class="srp-widget-thmb" width="' . $this->widget_args["thumbnail_width"] . '" height="' . $this->widget_args["thumbnail_height"] . '" alt="' . $post->post_title . '" />';
+			
 			} else {
 			
 				// No featured image has been found. Trying to fetch the first image tag from the post content.
-				$featured_htmltag = $this->getFirstImageUrl($this->widget_args["thumbnail_width"], $this->widget_args["thumbnail_height"], the_title_attribute(array('echo' => 0)));
+				$featured_htmltag = $this->getFirstImageUrl($post, $this->widget_args["thumbnail_width"], $this->widget_args["thumbnail_height"], $post->post_title);
 			}
 
 			// Checking if thumbnail should be linked to post.
 			if ('yes' == $this->widget_args['thumbnail_link']) {
 			
 				// Building featured image link tag.
-				$featured_temp_content  = $this->srp_create_tag('a', $featured_htmltag, array('class' => 'srp-widget-thmblink', 'href' => get_permalink($post->ID), 'title' => the_title_attribute(array('echo' => 0))));
+				$featured_temp_content  = $this->srp_create_tag('a', $featured_htmltag, array('class' => 'srp-widget-thmblink', 'href' => get_permalink($post->ID), 'title' => $post->post_title));
 			
 			} else {
 			
@@ -513,7 +489,7 @@ class SpecialRecentPostsFree {
 		} else {
 			
 			// No featured image has been found. Trying to fetch the first image tag from the post content.
-			$featured_htmltag = $this->getFirstImageUrl($this->widget_args["thumbnail_width"], $this->widget_args["thumbnail_height"], the_title_attribute(array('echo' => 0)));
+			$featured_htmltag = $this->getFirstImageUrl($post, $this->widget_args["thumbnail_width"], $this->widget_args["thumbnail_height"], $post->post_title);
 			
 			// Checking if returned image is real or it is a false value due to skip_noimage_posts option enabled.
 			if ($featured_htmltag) {
@@ -522,7 +498,7 @@ class SpecialRecentPostsFree {
 				if ('yes' == $this->widget_args['thumbnail_link']) {
 				
 					// Building image tag.
-					$featured_temp_content = $this->srp_create_tag('a', $featured_htmltag, array('class' => 'srp-widget-thmblink', 'href' => get_permalink($post->ID), 'title' => the_title_attribute(array('echo' => 0))));
+					$featured_temp_content = $this->srp_create_tag('a', $featured_htmltag, array('class' => 'srp-widget-thmblink', 'href' => get_permalink($post->ID), 'title' => $post->post_title));
 					
 				} else {
 				
@@ -747,15 +723,34 @@ class SpecialRecentPostsFree {
 			return $result_posts;
 		}
 		
+		// Looping through result posts for image check.
+		// If "skip posts with no image" option is enabled, re-build entire array, matching the post limit.
+		foreach($result_posts as $k => $v) {
+
+			// Filling thumb list with post IDs as keys.
+			$currentThumbHtml = $this->displayThumb($v);
+
+			// If the current post has no images and the "skip posts with no image" option is enabled, remove the post from the list.
+			if (!$currentThumbHtml) {
+
+				unset($result_posts[$k]);
+
+			} else {
+
+				// Push the current post thumbnail HTML in the global thumbnail output list.
+				$this->postThumbsOutput[$v->ID] = $currentThumbHtml;
+			}
+		}
+
+		// Fixing issues that let included IDs override the max number of post displayed.
+		$output_array = array_slice($result_posts, 0, $this->widget_args["post_limit"]);
+
 		// Checking if random posts option is on.
 		if ($this->widget_args["post_random"] == "yes") {
 			
 			// Shuffling the result array.
-			shuffle($result_posts);
+			shuffle($output_array);
 		}
-		
-		// Fixing issues that let included IDs override the max number of post displayed.
-		$output_array = array_slice($result_posts, 0, $args["numberposts"]);
 
 		// Return result array.
 		return $output_array;
@@ -778,19 +773,47 @@ class SpecialRecentPostsFree {
 		if ('yes' != $this->widget_args["widget_title_hide"]) {
 		
 			// Checking if SRP is displaying a category filter result and if it should use the linked category title.
-			if ( ($this->widget_args["category_include"] != '') && ($this->widget_args["category_title"] == "yes") ) {
+			if ($this->widget_args["category_title"] == "yes") {
 				
-				// Fetching category link.
-				$srp_category_link = get_category_link($this->widget_args["category_include"]);
+				// Fetching Category ID.
+				if ($this->widget_args["category_include"] != '') {
+
+					$thisCategoryId = $this->widget_args["category_include"];
+
+				} else if($this->widget_args["category_autofilter"] == 'yes') {
+
+					// Fetching category link.
+					$thisCategory = get_the_category();
+					$thisCategoryId = $thisCategory[0]->cat_ID;
+				}
+				
+				$srp_category_link = get_category_link($thisCategoryId);
 				
 				// Building category title HTML.
-				$category_title_link = $this->srp_create_tag('a', get_cat_name($this->widget_args["category_include"]), array('class' => 'srp-widget-title-link', 'href' => $srp_category_link, 'title' => get_cat_name($this->widget_args["category_include"])));
-				$srp_content .= $this->srp_create_tag('h3', $category_title_link, array('class' => 'widget-title srp-widget-title'));
+				$category_title_link = $this->srp_create_tag('a', get_cat_name($thisCategoryId), array('class' => 'srp-widget-title-link', 'href' => $srp_category_link, 'title' => get_cat_name($thisCategoryId)));
+				
+				// Preparing widget title classes.
+				$categoryAdditionalClasses = array('class' => 'widget-title srp-widget-title');
+
+				if ($this->widget_args['widget_title_header_classes'] != '') {
+					$categoryAdditionalClasses['class'] .= ' ' . $this->widget_args['widget_title_header_classes'];
+				}
+
+				// Building widget title.
+				$srp_content .= $this->srp_create_tag($this->widget_args['widget_title_header'], $category_title_link, $categoryAdditionalClasses);
 				
 			} else {
 				
+				// Preparing widget title classes.
+				$widgetTitleAdditionalClasses = array('class' => 'widget-title srp-widget-title');
+				
+				// Handling additional widget title classes.
+				if ($this->widget_args['widget_title_header_classes'] != '') {
+					$widgetTitleAdditionalClasses['class'] .= ' ' . $this->widget_args['widget_title_header_classes'];
+				}
+
 				// Building normal widget title HTML.
-				$srp_content .= $this->srp_create_tag('h3', $this->srp_sanitize($this->widget_args["widget_title"]), array('class' => 'widget-title srp-widget-title'));
+				$srp_content .= $this->srp_create_tag($this->widget_args['widget_title_header'], $this->srp_sanitize($this->widget_args["widget_title"]), $widgetTitleAdditionalClasses);
 			}
 		}
 		
@@ -827,7 +850,7 @@ class SpecialRecentPostsFree {
 				setup_postdata($post);
 				
 				// Fetching post image.
-				$post_thumb_content = $this->displayThumb($post);
+				$post_thumb_content = $this->postThumbsOutput[$post->ID];
 				
 				// Checking if current post has at least an image. If not, and Post Noimage Skip option is enabled, skip it.
 				if (!$post_thumb_content)
@@ -853,7 +876,7 @@ class SpecialRecentPostsFree {
 					$ptitle_heading_atts = array('class' => 'srp-post-title');
 
 					// Building linked post title HTML
-					$ptitlelink  =  $this->srp_create_tag('a', $this->extractTitle($post), array('class' => 'srp-post-title-link', 'href' => get_permalink($post->ID), 'title' => the_title_attribute(array('echo' => 0))));
+					$ptitlelink  =  $this->srp_create_tag('a', $this->extractTitle($post), array('class' => 'srp-post-title-link', 'href' => get_permalink($post->ID), 'title' => $post->post_title));
 					$srp_content .= $this->srp_create_tag('h4', $ptitlelink, $ptitle_heading_atts);
 					
 					// Checking if "post_date" option is on.
@@ -879,13 +902,13 @@ class SpecialRecentPostsFree {
 						if ($this->widget_args['image_string_break'] != "") {
 							
 							// Building HTML image tag for the image string break.
-							$image_string_break = $this->srp_create_tag('img', null, array('class' => 'srp-widget-stringbreak-image', 'src' => $this->srp_sanitize($this->widget_args['image_string_break']), 'alt' => the_title_attribute(array('echo' => 0))));
+							$image_string_break = '<img src="' . $this->srp_sanitize($this->widget_args['image_string_break']) . '" class="srp-widget-stringbreak-image" alt="' . $post->post_title . '" />';
 							
 							// Checking if "string break link" option is on.
 							if ('yes' == $this->widget_args['string_break_link']) {
 							
 								// Building image string break link HTML tag.
-								$srp_content .= $this->srp_create_tag('a', $image_string_break, array('class' => 'srp-widget-stringbreak-link-image', 'href' => get_permalink($post->ID), 'title' => the_title_attribute(array('echo' => 0))));
+								$srp_content .= $this->srp_create_tag('a', $image_string_break, array('class' => 'srp-widget-stringbreak-link-image', 'href' => get_permalink($post->ID), 'title' => $post->post_title));
 							
 							} else {
 							
@@ -899,7 +922,7 @@ class SpecialRecentPostsFree {
 							if ('yes' == $this->widget_args['string_break_link']) {
 							
 								// Building string break link HTML tag.					
-								$srp_content .= $this->srp_create_tag('a', $this->srp_sanitize($this->widget_args['string_break']), array('class' => 'srp-widget-stringbreak-link', 'href' => get_permalink($post->ID), 'title' => the_title_attribute(array('echo' => 0))));
+								$srp_content .= $this->srp_create_tag('a', $this->srp_sanitize($this->widget_args['string_break']), array('class' => 'srp-widget-stringbreak-link', 'href' => get_permalink($post->ID), 'title' => $post->post_title));
 								
 							} else {
 								
@@ -1020,7 +1043,10 @@ class SpecialRecentPostsFree {
 		
 		// If "allowed_tags" option is on, keep them separated from strip_tags.
 		if (!empty($this->widget_args["allowed_tags"])) {
-		
+			
+			// Handling the <br /> tag.
+			$this->widget_args["allowed_tags"] = str_replace('<br />', '<br>', $this->widget_args["allowed_tags"]);
+			
 			// Stripping tags except the ones specified.
 			return strip_tags($temp_output, htmlspecialchars_decode($this->widget_args["allowed_tags"]));
 			
@@ -1058,7 +1084,7 @@ class SpecialRecentPostsFree {
 				
 				case "count":
 					// Return count.
-					return strlen(implode(" ", $w));
+					return strlen(utf8_decode(implode(" ", $w)));
 				break;
 			}
 			
@@ -1073,7 +1099,7 @@ class SpecialRecentPostsFree {
 				
 				case "count":
 					// Return count.
-					return strlen($str);
+					return strlen(utf8_decode($str));
 				break;
 			}
 		}

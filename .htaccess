@@ -2,14 +2,16 @@
 # BEGIN WordPress
 <IfModule mod_rewrite.c>
 RewriteEngine On
-RewriteBase /cheaterchef/
+RewriteBase /
 RewriteRule ^index\.php$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /cheaterchef/index.php [L]
+RewriteRule . /index.php [L]
 </IfModule>
 
 # END WordPress
+<<<<<<< HEAD
+=======
 
 # Redirecting pages from Food Section South
 Redirect 301 /category/tag/white-sauce-ratio http://cheaterchef.com/tag/white_sauce_ratio
@@ -24,3 +26,4 @@ Redirect 301 /story/ http://cheaterchef.com/
 #Redirect 301 /story/how-roast-cranberries http://cheaterchef.com/how-roast-cranberries/
 #Redirect 301 /story/salumi-crash-course-how-prepare-antipasta-platter http://cheaterchef.com/salumi-crash-course-how-prepare-antipasta-platter/
 #Redirect 301 /story/irish-soda-bread-made-easy-self-rising-flour http://cheaterchef.com/irish-soda-bread-made-easy-self-rising-flour/
+>>>>>>> 6c56daaa4963e78d37143918ade275c33533ab01
