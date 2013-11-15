@@ -10,3 +10,20 @@ RewriteRule . /index.php [L]
 </IfModule>
 
 # END WordPress
+<<<<<<< HEAD
+=======
+
+# Redirecting pages from Food Section South
+Redirect 301 /category/tag/white-sauce-ratio http://cheaterchef.com/tag/white_sauce_ratio
+Redirect 301 /cooking http://cheaterchef.com
+Redirect 301 /photo-video http://cheaterchef.com/cheater-bbq/make-slow-cooker-pulled-pork-barbecue-recipe-and-video/
+Redirect 301 /cheater-chef http://cheaterchef.com/about/
+Redirect 301 /node/221 http://cheaterchef.com
+Redirect 301 /category/tag/ http://cheaterchef.com/tag/
+Redirect 301 /story/it’s-open-season-tennessee-country-ham-biscuits http://cheaterchef.com/its-open-season-tennessee-country-ham-biscuits/
+Redirect 301 /story/cheater-bistro-filet-mignon-au-poivre-b%C3%A9arnaise http://cheaterchef.com/cheater-bistro-filet-mignon-au-poivre-bearnaise
+Redirect 301 /story/ http://cheaterchef.com/
+#Redirect 301 /story/how-roast-cranberries http://cheaterchef.com/how-roast-cranberries/
+#Redirect 301 /story/salumi-crash-course-how-prepare-antipasta-platter http://cheaterchef.com/salumi-crash-course-how-prepare-antipasta-platter/
+#Redirect 301 /story/irish-soda-bread-made-easy-self-rising-flour http://cheaterchef.com/irish-soda-bread-made-easy-self-rising-flour/
+>>>>>>> 6c56daaa4963e78d37143918ade275c33533ab01

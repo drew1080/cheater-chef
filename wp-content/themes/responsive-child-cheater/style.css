@@ -86,14 +86,17 @@ form {
 }
 
 .menu .current_page_item a {
-  background-color: #343434;
   background-color:#993300;
   color:#ffffcc;
 }
 
-menu .current-menu-item a {
+.menu .current-menu-item a {
   background-color:#993300;
   color:#ffffcc;
+}
+
+.menu .current-menu-item .sub-menu a {
+  color:#933;
 }
 
 .menu .children a {

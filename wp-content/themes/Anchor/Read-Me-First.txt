@@ -1,0 +1,1 @@
+Note: This theme requires supreme parent theme to run. Download the supreme parent theme from your members area and upload it to wp-content/themes/ and then activate the Anchor theme.
