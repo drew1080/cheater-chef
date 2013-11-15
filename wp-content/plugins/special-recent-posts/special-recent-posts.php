@@ -1,12 +1,12 @@
 <?php
 /*
 Plugin Name: Special Recent Posts FREE Edition
-Plugin URI: http://wordpress.org/extend/plugins/special-recent-posts/
-Description: <a href='http://codecanyon.net/item/special-recent-posts-pro/552356'><strong>***** Want to go PRO? Special Recent Posts PRO Edition is now available. Upgrade Now! *****</strong></a>Special Recent Posts FREE Edition is a very powerful plugin/widget which displays your latest posts with thumbnails. <strong>To get started: 1)</strong> Click the "Activate" link to the left of this description. <strong>2)</strong> Go to Settings->Special Recent Posts FREE Edition and configure the general options. <strong>3)</strong> Go to the Widgets page and drag the 'Special Recent Posts FREE Edition' widget onto your sidebar and configure its settings. <strong>4)</strong> Enjoy.
-Version: 1.9.6
+Plugin URI: http://www.specialrecentposts.com
+Description: <a href='http://codecanyon.net/item/special-recent-posts-pro/552356'><strong>***** Want to go PRO? Special Recent Posts PRO Edition is now available. Upgrade Now! *****</strong></a>Special Recent Posts FREE Edition is a very powerful plugin/widget which displays your latest posts with thumbnails. <strong>To get started: 1)</strong> Click the "Activate" link to the left of this description. <strong>2)</strong> Go to Settings->Special Recent Posts FREE page and configure the general options. <strong>3)</strong> Go to the Widgets page and drag the 'Special Recent Posts FREE Edition' widget onto your sidebar and configure its settings. <strong>4)</strong> Enjoy.
+Version: 1.9.9
 Author: Luca Grandicelli
 Author URI: http://www.lucagrandicelli.com
-Copyright (C) 2011-2012  Luca Grandicelli
+Copyright (C) 2011-2012 Luca Grandicelli
 */
 
 /*
@@ -20,17 +20,18 @@ Copyright (C) 2011-2012  Luca Grandicelli
 define('SRP_PLUGIN_URL'          , plugin_dir_url( __FILE__ ));                  // Defining plugin url path.
 define('SRP_PLUGIN_DIR'          , dirname(__FILE__) . '/');                     // Defining plugin dir path.
 define('SRP_PLUGIN_MAINFILE'     , __FILE__);                                    // Defining plugin main filename.
-define('SRP_PLUGIN_VERSION'      , '1.9.6');                                     // Defining plugin version.
-define('SRP_PLUGIN_VERSION_MODE' , 'FREE');                                       // Defining plugin version mode.
+define('SRP_PLUGIN_VERSION'      , '1.9.9');                                     // Defining plugin version.
+define('SRP_PLUGIN_VERSION_MODE' , 'FREE');                                      // Defining plugin version mode.
 define('SRP_REQUIRED_PHPVER'     , '5.0.0');                                     // Defining required PHP version.
 define('SRP_TRANSLATION_ID'      , 'srplang');                                   // Defining gettext translation ID.
 define('SRP_CLASS_FOLDER'        , 'classes/');                                  // Defining path: main plugin classes folder.
-define('SRP_CSS_FOLDER'          , 'css/');                                      // Defining path: CSS folder.
-define('SRP_JS_FOLDER'           , 'js/');                                       // Defining path: javascript folder.
-define('SRP_IMAGES_FOLDER'       , 'images/');                                   // Defining path: global images folder.
+define('SRP_ASSETS_FOLDER'       , 'assets/');                                   // Defining path: assets folder.
 define('SRP_LIB_FOLDER'          , 'lib/');                                      // Defining path: external libraries folder.
 define('SRP_LANG_FOLDER'         , 'languages/');                                // Defining path: language packs folder.
 define('SRP_CACHE_DIR'           , 'cache/');                                    // Defining path: cached images folder. [Remember to set this folder to 0775 or 0777 permissions.]
+define('SRP_CSS_FOLDER'          , SRP_ASSETS_FOLDER    . 'css/');               // Defining path: CSS folder.
+define('SRP_JS_FOLDER'           , SRP_ASSETS_FOLDER    . 'js/');                // Defining path: javascript folder.
+define('SRP_IMAGES_FOLDER'       , SRP_ASSETS_FOLDER    . 'images/');            // Defining path: global images folder.
 define('SRP_ICONS_FOLDER'        , SRP_IMAGES_FOLDER    . 'icons/');             // Defining path: icons images folder.
 define('SRP_STRUCTURE_FOLDER'    , SRP_IMAGES_FOLDER    . 'structure/');         // Defining path: structure images folder.
 define('SRP_ADMIN_CSS'           , SRP_CSS_FOLDER       . 'css-admin.css');      // Defining path: administration stylesheet.
@@ -47,12 +48,12 @@ define('SRP_WIDGET_HEADER'       , SRP_STRUCTURE_FOLDER . 'widget_header.gif'); 
 | files for the plugin to properly work.
 | ---------------------------------------------
 */
-require_once('srp-config.php');                                               // Including main config file.
-require_once('srp-versionmap.php');                                           // Including the version map superarry, to prevent version conflicts.
-require_once(SRP_LIB_FOLDER    . 'phpthumb/ThumbLib.inc.php');                // Including PHP Thumbnailer external library.
-require_once(SRP_CLASS_FOLDER  . 'class-main.php');                           // Including main plugin class.
-require_once(SRP_CLASS_FOLDER  . 'class-widgets.php');                        // Including widgets class.
-require_once(SRP_LIB_FOLDER    . 'lib-admin.php');                            // Including plugin admin library.
+require_once('srp-defaults.php');                                // Including main config file.
+require_once('srp-versionmap.php');                              // Including the version map superarry, to prevent version conflicts.
+require_once(SRP_LIB_FOLDER    . 'phpthumb/ThumbLib.inc.php');   // Including PHP Thumbnailer external library.
+require_once(SRP_CLASS_FOLDER  . 'class-main.php');              // Including main plugin class.
+require_once(SRP_CLASS_FOLDER  . 'class-widgets.php');           // Including widgets class.
+require_once(SRP_LIB_FOLDER    . 'lib-admin.php');               // Including plugin admin library.
 
 /*
 | -------------------------------------------------------------
@@ -106,21 +107,20 @@ function srp_shortcode($atts) {
 function srp_plugin_action_links($links, $file) {
 	
 	static $this_plugin;
- 
-    if (!$this_plugin) {
-        $this_plugin = plugin_basename(__FILE__);
-    }
-	
+
+    if (!$this_plugin) $this_plugin = plugin_basename(__FILE__);
+        
     // Check to make sure we are on the correct plugin
     if ($file == $this_plugin) {
 		
         // The anchor tag and href to the URL we want. For a "Settings" link, this needs to be the url of your settings page
-        $settings_link = '<a href="' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=special-recent-posts/lib/lib-admin.php">Settings</a>';
-        
+        $settings_link = sprintf( '<a href="options-general.php?page=%s">%s</a>', plugin_basename(__DIR__) . '/lib/lib-admin.php', __('Settings') );
+		
 		// Add the link to the list
         array_unshift($links, $settings_link);
     }
- 
+ 	
+ 	// Return link.
     return $links;
 }
 

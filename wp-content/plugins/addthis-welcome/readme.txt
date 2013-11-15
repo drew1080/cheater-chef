@@ -1,9 +1,9 @@
 === AddThis Welcome Bar === 
-Contributors: _mjk_, jorbin, addthis_paul, joesullivan
+Contributors: joesullivan, srijith.v, _mjk_, solchea, addthis_paul, jorbin
 Tags: follow, addthis, social,  widget, AddThis 
 Requires at least: 3.3.2
-Tested up to: 3.4.1
-Stable tag: 1.0.1
+Tested up to: 3.5,1
+Stable tag: 1.2.1
 
 Welcome visitors with a personalized greeting based on their social network preferences 
 
@@ -58,9 +58,25 @@ All of the options required through this plugin require javascript.   JavaScript
 = Who else uses AddThis? =
 Over 1,400,000 sites have installed AddThis. With over a billion unique users, AddThis is helping publishers and brands all over the world, in more than sixty languages. You might be surprised who's using AddThis--<a href="http://www.addthis.com/features#partners">here are just a few</a>.
 
+== Screenshots ==
+
+1. Configuring the welcome bar
+2. Welcoming users coming from Facebook
 
 
 == Changelog ==
+
+= 1.2.1 =
+* Minor bug fixes
+
+= 1.2 = 
+* Updated UI
+* Option to deactivate Welcome bar temporarily
+* Bug fixes
+
+= 1.1 = 
+* Updated UI on Configurations
+* Updated Plugin Framework
 
 = 1.0.1 = 
 * Auto-hide now functions
@@ -69,6 +85,15 @@ Over 1,400,000 sites have installed AddThis. With over a billion unique users, A
 * Initial Version
 
 == Upgrade Notice ==
+
+= 1.2.1 =
+* Bug fixes
+
+= 1.2 = 
+* Updated UI and option to temporarily deactivate welcome bar
+
+= 1.1 = 
+* Updated UI on configurations and Plugin Framework
 
 = 1.0.1 =
 * Auto-hide after now functions correctly :)

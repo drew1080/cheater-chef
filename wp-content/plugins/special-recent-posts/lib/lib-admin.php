@@ -3,12 +3,12 @@
 | --------------------------------------------------------
 | File        : lib-admin.php
 | Project     : Special Recent Posts FREE Edition plugin for Wordpress
-| Version     : 1.9.6
+| Version     : 1.9.9
 | Description : This file contains several functions
 |               for SRP initialization and admin panel building.
 | Author      : Luca Grandicelli
 | Author URL  : http://www.lucagrandicelli.com
-| Plugin URL  : http://wordpress.org/extend/plugins/special-recent-posts/
+| Plugin URL  : http://www.specialrecentposts.com
 | Copyright (C) 2011-2012  Luca Grandicelli
 | --------------------------------------------------------
 */
@@ -120,7 +120,7 @@ function check_plugin_compatibility() {
 function srp_admin_setup() {
 	
 	// Adding SubMenu Page.
-	$srp_settings_page = add_submenu_page('options-general.php', __('Special Recent Posts FREE Edition - Settings Page', 'Special Recent Posts FREE Edition - Settings Page'), __('Special Recent Posts FREE Edition', 'Special Recent Posts FREE Edition'), 'administrator', __FILE__, 'srp_admin_menu_options');
+	$srp_settings_page = add_submenu_page('options-general.php', __('Special Recent Posts FREE Edition - Settings Page', 'Special Recent Posts FREE Edition - Settings Page'), __('Special Recent Posts FREE', 'Special Recent Posts FREE'), 'administrator', __FILE__, 'srp_admin_menu_options');
 	
     // Using registered $page handle to hook stylesheet loading.
     add_action('admin_print_styles-' . $srp_settings_page, 'srp_admin_plugin_add_style');
@@ -238,9 +238,8 @@ function srp_admin_menu_options() {
 			<div class="srp_option_header_l1">
 				<?php _e('<strong>Welcome to the Special Recent Posts FREE Edition Admin Panel.</strong><br /> In this page you can configure the main settings for the Special Recent Posts FREE Edition plugin. Keep in mind that these are basic options. 
 				Special options apply for each widget instance, shortcode or PHP code to ensure an high level of customization. Go to Widget Page and drag the Special Recent Posts FREE Edition widget to see additional options available.', SRP_TRANSLATION_ID); ?>
-				<h3>The plugin CSS has now been moved into a single included file located at wp-content/plugins/special-recent-posts/css/css-front.css</h3>
 				<div class="error">
-					<h3>Want to go PRO? Special Recent Posts PRO Edition is now available. <a href="http://codecanyon.net/item/special-recent-posts-pro/552356" title="Upgrade now to Special Recent Posts PRO Edition">Upgrade Now!</a></h3>
+					<h3>Want to go PRO? Special Recent Posts PRO Edition is now available. <a href="http://codecanyon.net/item/special-recent-posts-pro/552356" title="Upgrade now to Special Recent Posts PRO Edition" target="_blank">Upgrade Now!</a></h3>
 				</div>
 			</div>
 			<!-- EOF Title and Description section. -->
@@ -280,7 +279,7 @@ function srp_admin_menu_options() {
 								</dt>
 								<dd>
 									<?php _e('This option enables some compatibility features that change the behaviour of the SRP plugin, in order to work seamlessly with other plugins.
-									If you are experiencing problems with Special Recent Posts FREE Edition and other plugins, you might want to disable this option.', SRP_TRANSLATION_ID); ?>
+									If you are experiencing problems with Special Recent Posts PRO and other plugins, you might want to disable this option.', SRP_TRANSLATION_ID); ?>
 								</dd>
 								
 								<dt>
@@ -295,7 +294,7 @@ function srp_admin_menu_options() {
 								</dt>
 								<dd>
 									<?php _e('This is the default image that appears when no other images are available inside a post. 
-									You can use the one you prefer, by simply inserting the full URL of the image. 
+									You can use the one you prefer, by simply typing in the full URL of the image. 
 									If you leave this field empty, the default no-image placeholder will be loaded.', SRP_TRANSLATION_ID); ?>
 								</dd>
 								
@@ -384,7 +383,7 @@ function srp_admin_menu_options() {
 									<strong><?php _e('Empty Cache Folder', SRP_TRANSLATION_ID); ?></strong>
 								</dt>
 								<dd>
-									<?php _e('Click this button to empty the thumbnails cache folder, which is located at special-recent-posts/cache/', SRP_TRANSLATION_ID); ?>
+									<?php _e('Click this button to empty the thumbnails cache folder.', SRP_TRANSLATION_ID); ?>
 								</dd>
 						</div>
 						<!-- EOF Left Box. -->

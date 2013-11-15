@@ -3,12 +3,12 @@
 | ----------------------------------------------------------
 | File        : srp-versionmap.php
 | Project     : Special Recent Posts FREE Edition plugin for Wordpress
-| Version     : 1.9.6
+| Version     : 1.9.9
 | Description : This file contains a super array which maps
 |               all the previous option keys with the current ones.
 | Author      : Luca Grandicelli
 | Author URL  : http://www.lucagrandicelli.com
-| Plugin URL  : http://wordpress.org/extend/plugins/special-recent-posts/
+| Plugin URL  : http://www.specialrecentposts.com
 | Copyright (C) 2011-2012  Luca Grandicelli
 | ----------------------------------------------------------
 */

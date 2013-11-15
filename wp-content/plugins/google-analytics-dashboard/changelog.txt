@@ -1,3 +1,5 @@
+2.0.5
+  - Use proper call for escaping post id in draft query
 2.0.4
   - Updated to use version 2.4 of the Google Analytics API 
   - Fixed bug with PHP reference passing.

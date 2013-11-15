@@ -3,7 +3,7 @@ Contributors: Carson McDonald
 Tags: google, analytics, google analytics, dashboard, widget
 Requires at least: 2.8
 Tested up to: 3.4.1
-Stable tag: 2.0.4
+Stable tag: 2.0.5
 
 This plugin will give you access to your Google Analytics data directly inside your WordPress blog.
 
@@ -58,6 +58,10 @@ default with PHP 5. There is a backport for PHP 4 found here:
 http://sourceforge.net/projects/ister4framework/
 
 == Change Log ==
+
+= 2.0.5 =
+
+* Use proper call for escaping post id in draft query.
 
 = 2.0.4 =
 

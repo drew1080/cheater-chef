@@ -4,7 +4,6 @@ require_once('wordfenceClass.php');
 class wfAPI {
 	public $lastHTTPStatus = '';
 	public $lastCurlErrorNo = '';
-	private $curlDataWritten = 0;
 	private $curlContent = 0;
 	private $APIKey = '';
 	private $wordpressVersion = '';
@@ -13,8 +12,11 @@ class wfAPI {
 		$this->APIKey = $apiKey;
 		$this->wordpressVersion = $wordpressVersion;
 	}
+	public function getStaticURL($url){ // In the form '/something.bin' without quotes
+		return $this->getURL($this->getAPIURL() . $url);
+	}
 	public function call($action, $getParams = array(), $postParams = array()){
-		$json = $this->getURL($this->getAPIURL() . '/v' . WORDFENCE_API_VERSION . '/?' . $this->makeAPIQueryString() . '&' . http_build_query(
+		$json = $this->getURL($this->getAPIURL() . '/v' . WORDFENCE_API_VERSION . '/?' . $this->makeAPIQueryString() . '&' . self::buildQuery(
 			array_merge(
 				array('action' => $action),
 				$getParams	
@@ -34,18 +36,14 @@ class wfAPI {
 	}
 	public function curlWrite($h, $d){
 		$this->curlContent .= $d;
-		if($this->curlDataWritten > 10000000){ //10 megs
-			return 0;
-		} else {
-			return strlen($d);
-		}
+		return strlen($d);
 	}
 	protected function getURL($url, $postParams = array()){
 		if(function_exists('curl_init')){
 			$this->curlDataWritten = 0;
 			$this->curlContent = "";
 			$curl = curl_init($url);
-			curl_setopt ($curl, CURLOPT_TIMEOUT, 300);
+			curl_setopt ($curl, CURLOPT_TIMEOUT, 900);
 			curl_setopt ($curl, CURLOPT_USERAGENT, "Wordfence.com UA " . (defined('WORDFENCE_VERSION') ? WORDFENCE_VERSION : '[Unknown version]') );
 			curl_setopt ($curl, CURLOPT_RETURNTRANSFER, TRUE);
 			curl_setopt ($curl, CURLOPT_HEADER, 0);
@@ -54,8 +52,9 @@ class wfAPI {
 			curl_setopt ($curl, CURLOPT_WRITEFUNCTION, array($this, 'curlWrite'));
 			curl_setopt($curl, CURLOPT_POST, true);
 			curl_setopt($curl, CURLOPT_POSTFIELDS, $postParams);
-			
+			wordfence::status(4, 'info', "CURL fetching URL: " . $url);
 			$curlResult = curl_exec($curl);
+
 			$httpStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 			$this->lastCurlErrorNo = curl_errno($curl);
 			if($httpStatus == 200){
@@ -64,9 +63,10 @@ class wfAPI {
 			} else {
 				$cerror = curl_error($curl);
 				curl_close($curl);
-				throw new Exception("We received an error response when trying to contact the Wordfence scanning servers. The HTTP status code was [$httpStatus]" . ($cerror ? (' and the error from CURL was ' . $cerror) : ''));
+				throw new Exception("We received an error response when trying to contact the Wordfence scanning servers. The HTTP status code was [$httpStatus] and the curl error number was [" . $this->lastCurlErrorNo . "] " . ($cerror ? (' and the error from CURL was: ' . $cerror) : ''));
 			}
 		} else {
+			wordfence::status(4, 'info', "Fetching URL with file_get: " . $url);
 			$data = $this->fileGet($url, $postParams);
 			if($data === false){
 				$err = error_get_last();
@@ -106,7 +106,7 @@ class wfAPI {
 		$url = $this->getAPIURL() . '/v' . WORDFENCE_API_VERSION . '/?' . $this->makeAPIQueryString() . '&action=' . $func;
 		if(function_exists('curl_init')){
 			$curl = curl_init($url);
-			curl_setopt ($curl, CURLOPT_TIMEOUT, 300);
+			curl_setopt ($curl, CURLOPT_TIMEOUT, 900);
 			//curl_setopt($curl, CURLOPT_VERBOSE, true);
 			curl_setopt ($curl, CURLOPT_USERAGENT, "Wordfence");
 			curl_setopt ($curl, CURLOPT_RETURNTRANSFER, TRUE);
@@ -119,6 +119,7 @@ class wfAPI {
 				curl_setopt($curl, CURLOPT_POSTFIELDS, array());
 			}                               
 			$data = curl_exec($curl);       
+
 			$httpStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 			if($httpStatus != 200){
 				$cError = curl_error($curl);
@@ -152,13 +153,25 @@ class wfAPI {
 	public function makeAPIQueryString(){
 		$siteurl = '';
 		if(function_exists('get_bloginfo')){
-			$siteurl = get_bloginfo('siteurl');
+			if(is_multisite()){
+				$siteurl = network_home_url();
+				$siteurl = rtrim($siteurl, '/'); //Because previously we used get_bloginfo and it returns http://example.com without a '/' char.
+			} else {
+				$siteurl = home_url();
+			}
 		}
-		return http_build_query(array(
+		return self::buildQuery(array(
 			'v' => $this->wordpressVersion, 
 			's' => $siteurl, 
 			'k' => $this->APIKey
 			));
+	}
+	private function buildQuery($data){
+		if(version_compare(phpversion(), '5.1.2', '>=')){
+			return http_build_query($data, '', '&'); //arg_separator parameter was only added in PHP 5.1.2. We do this because some PHP.ini's have arg_separator.output set to '&amp;'
+		} else {
+			return http_build_query($data);
+		}
 	}
 	private function getAPIURL(){
 		$ssl_supported = false;

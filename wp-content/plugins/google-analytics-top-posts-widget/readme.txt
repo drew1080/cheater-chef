@@ -4,14 +4,14 @@ Google Analytics Top Content Widget
 Contributors: jtsternberg
 Plugin Name:  Google Analytics Top Content Widget
 Plugin URI: http://j.ustin.co/yWTtmy
-Tags: google analytics, google, top posts, top content, display rank, page rank, page views, widget, sidebar, sidebar widget, Google Analytics Dashboard, shortcode
+Tags: google analytics, google, top posts, top content, display rank, page rank, page views, widget, sidebar, sidebar widget, Google Analytics Dashboard, shortcode, site stats, statistics, stats
 Author: Jtsternberg
 Author URI: http://about.me/jtsternberg
 Donate link: http://j.ustin.co/rYL89n
 Requires at least: 3.0
-Tested up to: 3.3.1
-Stable tag: 1.4.1
-Version: 1.4.1
+Tested up to: 3.6
+Stable tag: 1.4.6
+Version: 1.4.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +51,20 @@ All of the widget options are exactly that.. optional. If you don't include them
 
 * Plugin uses WordPress transients to cache the Google results so you're not running the update from Google every time. cache updates every 24 hours.
 * Developer Friendly. Many filters built in to allow you to filter the results to dispay how you want.  One example of that would be to remove your Site's title from the results. (now unnecessary, as the widget/shortcode has the option built in)
+** [Example using a filter to add view counts after the title](http://wordpress.org/support/topic/top-viewed-content-couple-of-tweeks-needed?replies=9#post-3816989) -
+`add_filter( 'gtc_pages_filter', 'gtc_add_viewcount_title' );
+function gtc_add_viewcount_title( $pages ) {
+
+	if ( !$pages )
+		return false;
+	// loop through the pages
+	foreach ( $pages as $key => $page ) {
+		// and add the page count to the title value
+		$pages[$key]['children']['value'] = $pages[$key]['children']['value'] . ' ['. $pages[$key]['children']['children']['ga:pageviews'] .' Views]';
+	}
+	return $pages;
+}`
+
 
 == Installation ==
 
@@ -79,6 +93,21 @@ If you run into a problem or have a question, contact me ([contact form](http://
 
 == Changelog ==
 
+= 1.4.6 =
+* Bug fix: Listings wouldn't show when using 'post' as the contentfilter.
+
+= 1.4.5 =
+* Enhancement: More output filters, and check for '?p=' permalinks
+
+= 1.4.4 =
+* Enhancement: Allow html in list item output
+
+= 1.4.3 =
+* Bug fix: Some entities would break the "remove site name" filter.
+
+= 1.4.2 =
+* Fixed the number value select for the "Select how far back you would like analytics to pull from:" selector.
+
 = 1.4.1 =
 * I updated the widget options for the date picker, and as a result, it broke any widgets that were saved with the old options. 1.4.1 solves that, but either way, re-saving the widget will correct the issue.
 
@@ -101,6 +130,21 @@ If you were using the shortcode and it broke, you will need to switch to using t
 
 
 == Upgrade Notice ==
+
+= 1.4.6 =
+* Bug fix: Listings wouldn't show when using 'post' as the contentfilter.
+
+= 1.4.5 =
+* Enhancement: More output filters, and check for '?p=' permalinks
+
+= 1.4.4 =
+* Enhancement: Allow html in list item output
+
+= 1.4.3 =
+* Bug fix: Some entities would break the "remove site name" filter.
+
+= 1.4.2 =
+* Fixed the number value select for the "Select how far back you would like analytics to pull from:" selector.
 
 = 1.4.1 =
 I updated the widget options for the date picker, and as a result, it broke any widgets that were saved with the old options. 1.4.1 solves that, but either way, re-saving the widget will correct the issue.
